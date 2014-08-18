@@ -15,3 +15,13 @@ E:\Projects\C#(Windows Forms)\InterView\Interview\obj\x86\Debug\Interview.csproj
 E:\Projects\C#(Windows Forms)\InterView\Interview\obj\x86\Debug\Interview.csprojResolveAssemblyReference.cache
 E:\Projects\C#(Windows Forms)\InterView\Interview\bin\Debug\system.data.sqlite.dll
 E:\Projects\C#(Windows Forms)\InterView\Interview\obj\x86\Debug\Interview.RespondentWindow.resources
+E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\obj\x86\Debug\Interview.exe
+E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\obj\x86\Debug\Interview.pdb
+E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\bin\Debug\Interview.exe
+E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\bin\Debug\Interview.pdb
+E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\bin\Debug\system.data.sqlite.dll
+E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\obj\x86\Debug\Interview.csprojResolveAssemblyReference.cache
+E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\obj\x86\Debug\Interview.InterviewWindow.resources
+E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\obj\x86\Debug\Interview.Properties.Resources.resources
+E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\obj\x86\Debug\Interview.RespondentWindow.resources
+E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\obj\x86\Debug\Interview.csproj.GenerateResource.Cache

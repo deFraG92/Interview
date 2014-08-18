@@ -19,9 +19,9 @@ namespace Interview
         public RespondentWindow(QuestionMaker questionMaker)
         {
             InitializeComponent();
-           // _questionMaker = questionMaker;
-            //InterviewThemesInit();
-            OrderedCollectionInit();
+            _questionMaker = questionMaker;
+            InterviewThemesInit();
+            //OrderedCollectionInit();
         }
 
         private void OrderedCollectionInit()

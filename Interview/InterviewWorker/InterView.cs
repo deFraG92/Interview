@@ -22,7 +22,7 @@ namespace Interview.InterviewWorker
         public static void Start()
         {
             _questionLoader =
-                new QuestionLoaderFromSqliteDb(@"E:\Projects\C#(Windows Forms)\InterView\Interview\Interview");
+                new QuestionLoaderFromSqliteDb(@"E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\Interview");
         }
 
         public static void Init()
