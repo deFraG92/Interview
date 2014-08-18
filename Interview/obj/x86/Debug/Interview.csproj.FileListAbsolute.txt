@@ -1,0 +1,17 @@
+C:\Projects\InterView\Interview\obj\x86\Debug\Interview.Properties.Resources.resources
+C:\Projects\InterView\Interview\obj\x86\Debug\Interview.csproj.GenerateResource.Cache
+C:\Projects\InterView\Interview\bin\Debug\Interview.exe
+C:\Projects\InterView\Interview\bin\Debug\Interview.pdb
+C:\Projects\InterView\Interview\obj\x86\Debug\Interview.exe
+C:\Projects\InterView\Interview\obj\x86\Debug\Interview.pdb
+C:\Projects\InterView\Interview\obj\x86\Debug\Interview.InterviewWindow.resources
+E:\Projects\C#(Windows Forms)\InterView\Interview\obj\x86\Debug\Interview.exe
+E:\Projects\C#(Windows Forms)\InterView\Interview\obj\x86\Debug\Interview.pdb
+E:\Projects\C#(Windows Forms)\InterView\Interview\bin\Debug\Interview.exe
+E:\Projects\C#(Windows Forms)\InterView\Interview\bin\Debug\Interview.pdb
+E:\Projects\C#(Windows Forms)\InterView\Interview\obj\x86\Debug\Interview.InterviewWindow.resources
+E:\Projects\C#(Windows Forms)\InterView\Interview\obj\x86\Debug\Interview.Properties.Resources.resources
+E:\Projects\C#(Windows Forms)\InterView\Interview\obj\x86\Debug\Interview.csproj.GenerateResource.Cache
+E:\Projects\C#(Windows Forms)\InterView\Interview\obj\x86\Debug\Interview.csprojResolveAssemblyReference.cache
+E:\Projects\C#(Windows Forms)\InterView\Interview\bin\Debug\system.data.sqlite.dll
+E:\Projects\C#(Windows Forms)\InterView\Interview\obj\x86\Debug\Interview.RespondentWindow.resources
