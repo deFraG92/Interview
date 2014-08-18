@@ -10,7 +10,6 @@ namespace Interview.InterviewWorker
     public class Question 
     {
         public string Name { get; set; }
-        public string Id { get; set; }
 
         public override bool Equals(object obj)
         {

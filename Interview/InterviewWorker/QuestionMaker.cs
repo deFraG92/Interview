@@ -10,6 +10,12 @@ using System.Text.RegularExpressions;
 
 namespace Interview.InterviewWorker
 {
+    public enum QuestionMove
+    {
+        Forward,
+        BackWard
+    }
+    
     public class QuestionMaker
     {
         private Control _baseControl;
@@ -47,9 +53,9 @@ namespace Interview.InterviewWorker
             return false;
         }
 
-        public object GetQuestion()
+        public object GetQuestion(QuestionMove questionMove)
         {
-            var question = InterView.GetNextQuestion();
+            var question = InterView.GetQuestion(questionMove);
             return question;
         }
 

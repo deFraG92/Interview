@@ -17,23 +17,28 @@ namespace Interview
             InitializeComponent();
             _questionMaker = questionMaker;
             _questionMaker.QuestionMakerInit(this, new Point(25, 25));
-            GetQuestionAndAnswers();
+            GetQuestionAndAnswers(QuestionMove.Forward);
             //ParseInit();
         }
       
-        private void Approve_But_Click(object sender, EventArgs e)
+        private void Next_But_Click(object sender, EventArgs e)
         {
             var isTrue = false;
             _questionMaker.SetAnswer(out isTrue);
             if (isTrue)
             {
-                GetQuestionAndAnswers();
+                GetQuestionAndAnswers(QuestionMove.Forward);
             }
         }
 
-        private void GetQuestionAndAnswers()
+        private void Prev_BUT_Click(object sender, EventArgs e)
         {
-            var question = _questionMaker.GetQuestion();
+
+        }
+
+        private void GetQuestionAndAnswers(QuestionMove questionMove)
+        {
+            var question = _questionMaker.GetQuestion(questionMove);
             if (question == null)
                 Close();
             else
@@ -251,5 +256,7 @@ namespace Interview
             return resultStr;
         }
         #endregion
+
+
     }
 }

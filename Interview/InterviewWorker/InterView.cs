@@ -12,13 +12,14 @@ namespace Interview.InterviewWorker
 {
     public static class InterView
     {
-        private static Dictionary<Question, Answer> _questionsList;//
+        private static OrderedDictionary _questionsList;
         private static Dictionary<Question, int> _resultScoreList;
-        private static IEnumerator _enumerator;
         private static string _interviewThemeName;
         private static QuestionLoader _questionLoader;
         private static string _respondentName;
-       
+        private static Question[] _questions;
+        private static int _questionNumber = -1;
+
         public static void Start()
         {
             _questionLoader =
@@ -27,58 +28,61 @@ namespace Interview.InterviewWorker
 
         public static void Init()
         {
-            _questionsList = new Dictionary<Question, Answer>();
+            _questionsList = new OrderedDictionary();
             _resultScoreList = new Dictionary<Question, int>();
             QuestionsAndAnswersInit();
-            _enumerator = _questionsList.GetEnumerator();
-            
         }
 
-        public static string GetNextQuestion()
+        public static string GetQuestion(QuestionMove questionMove)
         {
-            if (!_questionsList.Equals(null))
+            try
             {
-                try
-                {
-                    var moveNext = _enumerator.MoveNext();
-                    if (moveNext)
-                    {
-                        var result = ((KeyValuePair<Question, Answer>) _enumerator.Current).Key.Name;
-                        return result;
-                    }
-                    return null;
-                }
-
-                catch (Exception exp)
-                {
-                    throw new Exception(exp.ToString());
-                }
+                if (questionMove == QuestionMove.Forward)
+                    _questionNumber++;
+                if (questionMove == QuestionMove.BackWard)
+                    _questionNumber--;
+                return (_questions.Length > _questionNumber) & (_questionNumber >= 0) ? _questions[_questionNumber].Name : null;
             }
-            throw new ArgumentNullException();
+            catch (Exception exp)
+            {
+                throw new Exception("GetQuestion: " + exp);
+            }
+        }
+
+        public static IEnumerable GetAnswersOnQuestion(object answer)
+        {
+            try
+            {
+                return ((Answer)_questionsList[_questionNumber]).ScoreList.Keys.ToList();
+            }
+            catch (Exception exp)
+            {
+                throw new Exception("GetAnswersOnQuestion: " + exp);
+            }
         }
 
         public static void SetAnswer(object answer)
         {
             try
             {
-                var currAnswer = ((KeyValuePair<Question, Answer>) _enumerator.Current);
-                                var result = currAnswer.Value.ScoreList[answer];
-                _resultScoreList.Add(currAnswer.Key, result);
-                _questionLoader.SetDataTable(SetDataType.AnswerResult);
-                 
+                var answerScore = ((Answer) _questionsList[_questionNumber]).ScoreList[answer];
+                if (!_resultScoreList.ContainsKey(_questions[_questionNumber]))
+                {
+                    _resultScoreList.Add(_questions[_questionNumber], answerScore);
+                    // _questionLoader.SetDataTable(SetDataType.AnswerResult);
+                }
+                else
+                {
+                    if (_resultScoreList[_questions[_questionNumber]] != answerScore)
+                    {
+                        //update
+                    }
+                }
             }
             catch (Exception exp)
             {
-                throw new Exception(exp.ToString());
+                throw new Exception("SetAnswer: " + exp);
             }
-        }
-
-        public static IEnumerable GetAnswersOnQuestion(object answer)
-        {
-            var currAnswer = ((KeyValuePair<Question, Answer>) _enumerator.Current);
-
-            var result = currAnswer.Value.ScoreList.Keys.ToList();
-            return result;
         }
 
         public static DataTable GetInterviewThemes()
@@ -96,23 +100,23 @@ namespace Interview.InterviewWorker
             return _interviewThemeName;
         }
 
-        public static Dictionary<Question, Answer> GetQuestionsAndAnswers()
+        public static IEnumerable GetQuestionsAndAnswers()
         {
             return _questionsList;
         }
 
         public static Answer GetAnswerByQuestion(Question question)
         {
-            if (_questionsList.ContainsKey(question))
+            if (_questionsList.Contains(question))
             {
-                return _questionsList[question];
+                return (Answer)_questionsList[question];
             }
             return null;
         }
 
         public static KeyValuePair<Question, Answer> GetCurrentQuestionAndAnswer()
         {
-            return ((KeyValuePair<Question, Answer>)_enumerator.Current);
+            return new KeyValuePair<Question, Answer>(_questions[_questionNumber], (Answer)_questionsList[_questionNumber]);
         }
 
         public static int GetScoreByQuestion(Question question)
@@ -144,16 +148,18 @@ namespace Interview.InterviewWorker
                     var question = new Question() {Name = dataTable.Rows[i][0].ToString()};
                     var answer = new Answer() {ScoreList = new Dictionary<object, int>()};
 
-                    if (!_questionsList.ContainsKey(question))
+                    if (!_questionsList.Contains(question))
                     {
                         answer.ScoreList.Add(dataTable.Rows[i][1], (int) dataTable.Rows[i][2]);
                         _questionsList.Add(question, answer);
                     }
                     else
                     {
-                        _questionsList[question].ScoreList.Add(dataTable.Rows[i][1], (int) dataTable.Rows[i][2]);
+                        ((Answer)_questionsList[question]).ScoreList.Add(dataTable.Rows[i][1], (int) dataTable.Rows[i][2]);
                     }
                 }
+                _questions = new Question[_questionsList.Count];
+                _questionsList.Keys.CopyTo(_questions, 0);
             }
         }
     }

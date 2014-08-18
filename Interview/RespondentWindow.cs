@@ -21,25 +21,6 @@ namespace Interview
             InitializeComponent();
             _questionMaker = questionMaker;
             InterviewThemesInit();
-            //OrderedCollectionInit();
-        }
-
-        private void OrderedCollectionInit()
-        {
-            var list = new OrderedDictionary {{new Question() {Name = "Сколько будет 2 + 2?"}, new Answer()}};
-            var testQuestion = new Question() {Name = "Сколько будет 7 + 7?"};
-            if (!list.Contains(testQuestion))
-            {
-                list.Add(testQuestion, new Answer());
-            }
-
-            var questionList = new Question[list.Keys.Count];
-            list.Keys.CopyTo(questionList, 0);
-            
-            for (int i = 0; i < questionList.Length; i++)
-            {
-                var s = questionList[i];
-            }
         }
 
         private void InterviewThemesInit()
@@ -73,9 +54,7 @@ namespace Interview
                     Application.ExitThread();
                     Application.Exit();
                 }
-            
-        }
-            //
+            }
         }
     }
 }
