@@ -59,13 +59,13 @@ namespace Interview.InterviewWorker
             return question;
         }
 
-        public void MakeAnswers(object question)
+        public void MakeAnswers(object question, QuestionMove questionMove)
         {
             try
             {
                 DeleteCurrentQuestionAndSetDefaults();
                 var list = InterView.GetAnswersOnQuestion(question);
-                SetAnswerSettings(list);
+                SetAnswerSettings(list, questionMove);
             }
             catch (Exception exp)
             {
@@ -135,9 +135,9 @@ namespace Interview.InterviewWorker
             _deltaY = _questionCoords.Y;
         }
 
-        private void SetAnswerSettings(IEnumerable list)
+        private void SetAnswerSettings(IEnumerable answerList, QuestionMove questionMove)
         {
-            foreach (var element in list)
+            foreach (var element in answerList)
             {
                 _deltaY += 25;
                 var radionButton = new RadioButton()
@@ -149,9 +149,17 @@ namespace Interview.InterviewWorker
                     Anchor = AnchorStyles.Bottom
                 };
                 _baseControl.Controls.Add(radionButton);
+                if (questionMove == QuestionMove.BackWard)
+                {
+                    if (element == InterView.GetAnswerFromResultScoreList())
+                    {
+                        radionButton.Checked = true;
+                    }
+                }
             }
-
         }
+
+
 
         private bool CheckForValidRespondentName(string respondentName)
         {

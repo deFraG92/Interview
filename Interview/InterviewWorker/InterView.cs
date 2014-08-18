@@ -75,6 +75,7 @@ namespace Interview.InterviewWorker
                 {
                     if (_resultScoreList[_questions[_questionNumber]] != answerScore)
                     {
+                        _resultScoreList[_questions[_questionNumber]] = answerScore;
                         //update
                     }
                 }
@@ -137,6 +138,26 @@ namespace Interview.InterviewWorker
         {
             _respondentName = respondentName;
         }
+
+        public static int GetQuestionIndex()
+        {
+            return _questionNumber;
+        }
+
+        public static object GetAnswerFromResultScoreList()
+        {
+            var answerScore = _resultScoreList[_questions[_questionNumber]];
+            var answerScoreList = ((Answer) _questionsList[_questionNumber]).ScoreList;
+            foreach (var score in answerScoreList.Keys)
+            {
+                if (answerScoreList[score] == answerScore)
+                {
+                    return score;
+                }
+            }
+            return null;
+        }
+
 
         private static void QuestionsAndAnswersInit()
         {

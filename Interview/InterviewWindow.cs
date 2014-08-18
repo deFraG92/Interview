@@ -33,7 +33,7 @@ namespace Interview
 
         private void Prev_BUT_Click(object sender, EventArgs e)
         {
-
+            GetQuestionAndAnswers(QuestionMove.BackWard);
         }
 
         private void GetQuestionAndAnswers(QuestionMove questionMove)
@@ -44,7 +44,7 @@ namespace Interview
             else
             {
                 label1.Text = question.ToString();
-                _questionMaker.MakeAnswers(question);
+                _questionMaker.MakeAnswers(question, questionMove);
             }
         }
 
