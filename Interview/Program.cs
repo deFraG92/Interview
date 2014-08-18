@@ -18,8 +18,7 @@ namespace Interview
             Application.SetCompatibleTextRenderingDefault(false);
             var questionMaker = new QuestionMaker();
             Application.Run(new RespondentWindow(questionMaker));
-            Application.ExitThread();
-            Application.Run(new InterviewWindow(questionMaker));
+            //Application.Run(new InterviewWindow(questionMaker));
         }
     }
 }

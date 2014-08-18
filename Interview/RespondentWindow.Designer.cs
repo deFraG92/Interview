@@ -33,14 +33,16 @@
             this.ChooseTheme_CMB = new System.Windows.Forms.ComboBox();
             this.FIO_LBL = new System.Windows.Forms.Label();
             this.Theme_LBL = new System.Windows.Forms.Label();
+            this.Birthday_Picker = new System.Windows.Forms.DateTimePicker();
+            this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
             // InterviewStart_BUT
             // 
             this.InterviewStart_BUT.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.InterviewStart_BUT.Location = new System.Drawing.Point(311, 106);
+            this.InterviewStart_BUT.Location = new System.Drawing.Point(338, 114);
             this.InterviewStart_BUT.Name = "InterviewStart_BUT";
-            this.InterviewStart_BUT.Size = new System.Drawing.Size(164, 44);
+            this.InterviewStart_BUT.Size = new System.Drawing.Size(137, 44);
             this.InterviewStart_BUT.TabIndex = 0;
             this.InterviewStart_BUT.Text = "Начать тестирование";
             this.InterviewStart_BUT.UseVisualStyleBackColor = true;
@@ -61,7 +63,7 @@
             // 
             this.ChooseTheme_CMB.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.ChooseTheme_CMB.FormattingEnabled = true;
-            this.ChooseTheme_CMB.Location = new System.Drawing.Point(311, 52);
+            this.ChooseTheme_CMB.Location = new System.Drawing.Point(192, 84);
             this.ChooseTheme_CMB.Name = "ChooseTheme_CMB";
             this.ChooseTheme_CMB.Size = new System.Drawing.Size(164, 24);
             this.ChooseTheme_CMB.TabIndex = 2;
@@ -80,11 +82,34 @@
             // 
             this.Theme_LBL.AutoSize = true;
             this.Theme_LBL.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.Theme_LBL.Location = new System.Drawing.Point(147, 55);
+            this.Theme_LBL.Location = new System.Drawing.Point(28, 87);
             this.Theme_LBL.Name = "Theme_LBL";
             this.Theme_LBL.Size = new System.Drawing.Size(158, 16);
             this.Theme_LBL.TabIndex = 4;
             this.Theme_LBL.Text = "Тема тестирования:";
+            // 
+            // Birthday_Picker
+            // 
+            this.Birthday_Picker.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.Birthday_Picker.Format = System.Windows.Forms.DateTimePickerFormat.Short;
+            this.Birthday_Picker.Location = new System.Drawing.Point(359, 40);
+            this.Birthday_Picker.MaxDate = new System.DateTime(2100, 12, 31, 0, 0, 0, 0);
+            this.Birthday_Picker.MinDate = new System.DateTime(1900, 1, 1, 0, 0, 0, 0);
+            this.Birthday_Picker.Name = "Birthday_Picker";
+            this.Birthday_Picker.Size = new System.Drawing.Size(116, 22);
+            this.Birthday_Picker.TabIndex = 6;
+            this.Birthday_Picker.Value = new System.DateTime(2100, 12, 31, 0, 0, 0, 0);
+            this.Birthday_Picker.ValueChanged += new System.EventHandler(this.Birthday_Picker_ValueChanged);
+            // 
+            // label1
+            // 
+            this.label1.AutoSize = true;
+            this.label1.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.label1.Location = new System.Drawing.Point(229, 42);
+            this.label1.Name = "label1";
+            this.label1.Size = new System.Drawing.Size(124, 16);
+            this.label1.TabIndex = 7;
+            this.label1.Text = "Дата рождения:";
             // 
             // RespondentWindow
             // 
@@ -92,11 +117,15 @@
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.BackColor = System.Drawing.Color.WhiteSmoke;
             this.ClientSize = new System.Drawing.Size(484, 162);
+            this.Controls.Add(this.label1);
+            this.Controls.Add(this.Birthday_Picker);
             this.Controls.Add(this.Theme_LBL);
             this.Controls.Add(this.FIO_LBL);
             this.Controls.Add(this.ChooseTheme_CMB);
             this.Controls.Add(this.FIO_TEXTBOX);
             this.Controls.Add(this.InterviewStart_BUT);
+            this.MaximumSize = new System.Drawing.Size(500, 200);
+            this.MinimumSize = new System.Drawing.Size(500, 200);
             this.Name = "RespondentWindow";
             this.Text = "RespondentWindow";
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.RespondentWindow_FormClosing);
@@ -112,5 +141,7 @@
         private System.Windows.Forms.ComboBox ChooseTheme_CMB;
         private System.Windows.Forms.Label FIO_LBL;
         private System.Windows.Forms.Label Theme_LBL;
+        private System.Windows.Forms.DateTimePicker Birthday_Picker;
+        private System.Windows.Forms.Label label1;
     }
 }

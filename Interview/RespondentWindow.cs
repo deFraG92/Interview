@@ -15,12 +15,14 @@ namespace Interview
     public partial class RespondentWindow : Form
     {
         private readonly QuestionMaker _questionMaker;
-        private bool _isOk;
+        private bool _rightFio;
+        private bool _rightBirthDate;
         public RespondentWindow(QuestionMaker questionMaker)
         {
             InitializeComponent();
             _questionMaker = questionMaker;
             InterviewThemesInit();
+            //CalendarTest();
         }
 
         private void InterviewThemesInit()
@@ -37,16 +39,16 @@ namespace Interview
         {
             var flag1 = _questionMaker.SetInterviewThemeName(ChooseTheme_CMB.Text);
             var flag2 = _questionMaker.SetRespondentName(FIO_TEXTBOX.Text);
-            if (flag1 && flag2)
+            if (flag1 && flag2 && _rightBirthDate)
             {
-                _isOk = true;
+                _rightFio = true;
                 Close();
             }
         }
 
         private void RespondentWindow_FormClosing(object sender, FormClosingEventArgs e)
         {
-            if (!_isOk)
+            if (!_rightFio)
             {
                 if (MessageBox.Show("Вы уверены, что хотите прервать тестирование?", "INFO",
                     MessageBoxButtons.OKCancel) == DialogResult.OK)
@@ -55,6 +57,11 @@ namespace Interview
                     Application.Exit();
                 }
             }
+        }
+
+        private void Birthday_Picker_ValueChanged(object sender, EventArgs e)
+        {
+            _rightBirthDate = true;
         }
     }
 }
