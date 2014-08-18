@@ -12,7 +12,7 @@ namespace Interview.InterviewWorker
 {
     public static class InterView
     {
-        private static Dictionary<Question, Answer> _questionsList;
+        private static Dictionary<Question, Answer> _questionsList;//
         private static Dictionary<Question, int> _resultScoreList;
         private static IEnumerator _enumerator;
         private static string _interviewThemeName;
