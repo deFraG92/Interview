@@ -42,6 +42,7 @@ namespace Interview
             if (flag1 && flag2 && _rightBirthDate)
             {
                 _rightFio = true;
+                _questionMaker.SetBirthDate(Birthday_Picker.Value);
                 Close();
             }
         }
@@ -62,6 +63,7 @@ namespace Interview
         private void Birthday_Picker_ValueChanged(object sender, EventArgs e)
         {
             _rightBirthDate = true;
+            
         }
     }
 }

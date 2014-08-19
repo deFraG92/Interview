@@ -17,6 +17,7 @@ namespace Interview.InterviewWorker
         private static string _interviewThemeName;
         private static QuestionLoader _questionLoader;
         private static string _respondentName;
+        private static string _respondentBirthDate;
         private static Question[] _questions;
         private static int _questionNumber = -1;
 
@@ -69,7 +70,7 @@ namespace Interview.InterviewWorker
                 if (!_resultScoreList.ContainsKey(_questions[_questionNumber]))
                 {
                     _resultScoreList.Add(_questions[_questionNumber], answerScore);
-                    // _questionLoader.SetDataTable(SetDataType.AnswerResult);
+                    _questionLoader.SetDataTable(SetDataType.AnswerResult);
                 }
                 else
                 {
@@ -156,6 +157,16 @@ namespace Interview.InterviewWorker
                 }
             }
             return null;
+        }
+
+        public static string GetBirthDate()
+        {
+            return _respondentBirthDate;
+        }
+        
+        public static void SetBirthDate(string birthDate)
+        {
+            _respondentBirthDate = birthDate;
         }
 
 

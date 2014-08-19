@@ -35,7 +35,7 @@ namespace Interview.InterviewWorker
                 }
                 if (getDataType == GetDataType.RespondentId)
                 {
-                    return CheckRespondentAndGetId(InterView.GetRespondentName());
+                    return CheckRespondentAndGetId(InterView.GetRespondentName(), InterView.GetBirthDate());
                 }
             }
             return null;
@@ -142,26 +142,27 @@ namespace Interview.InterviewWorker
             }
         }
 
-        private DataTable CheckRespondentAndGetId(string respondentName)
+        private DataTable CheckRespondentAndGetId(string respondentName, string birthDay)
         {
             var query = "select main.Respondents.Id " +
                         " from main.Respondents " +
-                        " where trim(main.Respondents.FIO) = '" + respondentName + "'";
+                        " where trim(main.Respondents.FIO) = '" + respondentName + "'" +
+                        " and main.Respondents.birthday = '" + birthDay + "'";
             var result = _dbConnection.SelectFromDb(query);
             return result;
 
         }
-
+        
         private int CheckOrInsertRespondentAndGetId()
         {
-            var respondentIdRow = CheckRespondentAndGetId(InterView.GetRespondentName());
+            var respondentIdRow = CheckRespondentAndGetId(InterView.GetRespondentName(), InterView.GetBirthDate());
             if (respondentIdRow.Rows.Count == 0)
             {
                 var respondentId = GetNewTableIndexId("main.Respondents");
                 if (respondentId != 0)
                 {
-                    var query = "insert into main.Respondents(id, FIO) values( '" + respondentId +
-                                "', '" + InterView.GetRespondentName() + "')";
+                    var query = "insert into main.Respondents(id, FIO, birthday) values( '" + respondentId +
+                                "', '" + InterView.GetRespondentName() + "', '" + InterView.GetBirthDate() + "')";
                     _dbConnection.DmlOperation(query);
                     return respondentId;
                 }

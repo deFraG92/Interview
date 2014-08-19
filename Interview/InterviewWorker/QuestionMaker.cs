@@ -96,6 +96,13 @@ namespace Interview.InterviewWorker
             return false;
         }
 
+        public void SetBirthDate(DateTime time)
+        {
+            var month = (time.Month.ToString().Length == 1) ? "0" + time.Month.ToString() : time.Month.ToString();
+            var date = string.Format("{0}-{1}-{2}", time.Year, month, time.Day);
+            InterView.SetBirthDate(date);
+        }
+        
         private object ChooseAnswerForQuestion()
         {
             try
@@ -148,7 +155,6 @@ namespace Interview.InterviewWorker
                     Font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold),
                     Anchor = AnchorStyles.Bottom
                 };
-                _baseControl.Controls.Add(radionButton);
                 if (questionMove == QuestionMove.BackWard)
                 {
                     if (element == InterView.GetAnswerFromResultScoreList())
@@ -156,6 +162,7 @@ namespace Interview.InterviewWorker
                         radionButton.Checked = true;
                     }
                 }
+                _baseControl.Controls.Add(radionButton);
             }
         }
 
