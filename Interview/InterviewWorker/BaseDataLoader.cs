@@ -5,11 +5,11 @@ using Interview.DBWorker;
 
 namespace Interview.InterviewWorker
 {
-    public class QuestionLoaderFromSqliteDb : QuestionLoader
+    public class BaseDataLoader : DataLoader
     {
         private readonly IDbConnection _dbConnection;
         private readonly bool _isConnected;
-        public QuestionLoaderFromSqliteDb(string tns)
+        public BaseDataLoader(string tns)
         {
             try
             {

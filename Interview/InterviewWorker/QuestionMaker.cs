@@ -19,8 +19,6 @@ namespace Interview.InterviewWorker
     public class QuestionMaker
     {
         private Control _baseControl;
-        private int _deltaX;
-        private int _deltaY;
         private Point _questionCoords;
 
         public QuestionMaker()
@@ -28,12 +26,9 @@ namespace Interview.InterviewWorker
            InterView.Start();
         }
 
-        public void QuestionMakerInit(Control baseControl, Point questionCoords)
+        public void QuestionMakerInit(Control baseControl)
         {
             _baseControl = baseControl;
-            _deltaX = questionCoords.X;
-            _deltaY = questionCoords.Y;
-            _questionCoords = questionCoords;
             InterView.Init();
         }
 
@@ -102,7 +97,12 @@ namespace Interview.InterviewWorker
             var date = string.Format("{0}-{1}-{2}", time.Year, month, time.Day);
             InterView.SetBirthDate(date);
         }
-        
+
+        public void ChangeQuestionCoords(Point questionCoords)
+        {
+            _questionCoords = questionCoords;
+        }
+
         private object ChooseAnswerForQuestion()
         {
             try
@@ -138,18 +138,19 @@ namespace Interview.InterviewWorker
                     _baseControl.Controls.Remove((RadioButton) control);
                 }
             }
-            _deltaX = _questionCoords.X;
-            _deltaY = _questionCoords.Y;
         }
 
         private void SetAnswerSettings(IEnumerable answerList, QuestionMove questionMove)
         {
+            //admintools
+            int deltaX = 0, deltaY = 10;
+            int bufDeltaX = 0, bufDeltaY = 25;
+            //
             foreach (var element in answerList)
             {
-                _deltaY += 25;
                 var radionButton = new RadioButton()
                 {
-                    Location = new Point(_deltaX, _deltaY),
+                    Location = new Point(_questionCoords.X + deltaX, _questionCoords.Y + deltaY),
                     Text = element.ToString(),
                     Size = new Size(200, 25),
                     Font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold),
@@ -162,7 +163,10 @@ namespace Interview.InterviewWorker
                         radionButton.Checked = true;
                     }
                 }
+                deltaX += bufDeltaX;
+                deltaY += bufDeltaY;
                 _baseControl.Controls.Add(radionButton);
+                
             }
         }
 

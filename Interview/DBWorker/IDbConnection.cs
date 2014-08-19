@@ -12,5 +12,6 @@ namespace Interview.DBWorker
         bool DmlOperation(string query);
         DataTable SelectFromDb(string query);
         bool DisconnectFromDb();
+        bool IsConnected();
     }
 }

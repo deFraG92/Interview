@@ -16,8 +16,13 @@ namespace Interview
         {
             InitializeComponent();
             _questionMaker = questionMaker;
-            _questionMaker.QuestionMakerInit(this, new Point(25, 25));
+            _questionMaker.QuestionMakerInit(this);
+            //Admin Tools
+            Question_Lbl.Location = new Point(20, 25);
+            //
             GetQuestionAndAnswers(QuestionMove.Forward);
+            var loader = new OptionsDataLoader();
+            loader.GetDataTable(GetDataType.Answers);
             //ParseInit();
         }
       
@@ -43,7 +48,9 @@ namespace Interview
                 Close();
             else
             {
-                label1.Text = question.ToString();
+                Question_Lbl.Text = question.ToString();
+                var questionLocation = new Point(Question_Lbl.Location.X, Question_Lbl.Location.Y + Question_Lbl.Height);
+                _questionMaker.ChangeQuestionCoords(questionLocation);
                 _questionMaker.MakeAnswers(question, questionMove);
             }
         }

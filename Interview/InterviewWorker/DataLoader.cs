@@ -3,14 +3,15 @@
 
 namespace Interview.InterviewWorker
 {
-    public enum GetDataType
+    public enum GetDataType 
     {
         Theme,
         Questions,
         Answers,
         QuestionsAnswersScores,
         InterviewId,
-        RespondentId
+        RespondentId,
+        Options
     }
 
     public enum SetDataType
@@ -21,7 +22,7 @@ namespace Interview.InterviewWorker
         FactorResult
     }
 
-    public abstract class QuestionLoader
+    public abstract class DataLoader
     {
         public abstract DataTable GetDataTable(GetDataType getDataType);
         public abstract void SetDataTable(SetDataType setDataType);

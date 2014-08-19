@@ -35,7 +35,8 @@ namespace Interview.DBWorker
             try
             {
                 _sqLiteConnection = new SQLiteConnection(string.Format("Data Source={0}",tns));
-                _sqLiteConnection.Open();
+                if (_sqLiteConnection.State != ConnectionState.Open)
+                    _sqLiteConnection.Open();
                 _isConnected = true;
             }
             catch (Exception exp)
@@ -99,6 +100,11 @@ namespace Interview.DBWorker
 
             }
             return false;
+        }
+
+        public bool IsConnected()
+        {
+            return _isConnected;
         }
     }
 }

@@ -15,7 +15,7 @@ namespace Interview.InterviewWorker
         private static OrderedDictionary _questionsList;
         private static Dictionary<Question, int> _resultScoreList;
         private static string _interviewThemeName;
-        private static QuestionLoader _questionLoader;
+        private static DataLoader _questionLoader;
         private static string _respondentName;
         private static string _respondentBirthDate;
         private static Question[] _questions;
@@ -24,7 +24,7 @@ namespace Interview.InterviewWorker
         public static void Start()
         {
             _questionLoader =
-                new QuestionLoaderFromSqliteDb(@"E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\Interview");
+                new BaseDataLoader(@"E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\Interview");
         }
 
         public static void Init()
@@ -70,7 +70,7 @@ namespace Interview.InterviewWorker
                 if (!_resultScoreList.ContainsKey(_questions[_questionNumber]))
                 {
                     _resultScoreList.Add(_questions[_questionNumber], answerScore);
-                    _questionLoader.SetDataTable(SetDataType.AnswerResult);
+                    //_questionLoader.SetDataTable(SetDataType.AnswerResult);
                 }
                 else
                 {
