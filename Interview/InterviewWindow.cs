@@ -18,12 +18,11 @@ namespace Interview
             _questionMaker = questionMaker;
             _questionMaker.QuestionMakerInit(this);
             //Admin Tools
-            Question_Lbl.Location = new Point(20, 25);
+            Question_Lbl.Location = Options.QuestionLocation;
+            Prev_But.Visible = Options.HaveBackward;
             //
             GetQuestionAndAnswers(QuestionMove.Forward);
-            var loader = new OptionsDataLoader();
-            loader.GetDataTable(OptionName.QuestionLocation);
-            //ParseInit();
+           //ParseInit();
         }
       
         private void Next_But_Click(object sender, EventArgs e)

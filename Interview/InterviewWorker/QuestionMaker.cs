@@ -143,14 +143,14 @@ namespace Interview.InterviewWorker
         private void SetAnswerSettings(IEnumerable answerList, QuestionMove questionMove)
         {
             //admintools
-            int deltaX = 0, deltaY = 10;
-            int bufDeltaX = 0, bufDeltaY = 25;
+            var spaceBetweenQuestionAndAnswers = Options.SpaceBetweenQuestionAndAnswers;
+            var spaceBetweenAnswers = Options.SpaceBetweenAnswers;
             //
             foreach (var element in answerList)
             {
                 var radionButton = new RadioButton()
                 {
-                    Location = new Point(_questionCoords.X + deltaX, _questionCoords.Y + deltaY),
+                    Location = new Point(_questionCoords.X + spaceBetweenQuestionAndAnswers.X, _questionCoords.Y + spaceBetweenQuestionAndAnswers.Y),
                     Text = element.ToString(),
                     Size = new Size(200, 25),
                     Font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold),
@@ -163,8 +163,8 @@ namespace Interview.InterviewWorker
                         radionButton.Checked = true;
                     }
                 }
-                deltaX += bufDeltaX;
-                deltaY += bufDeltaY;
+                spaceBetweenQuestionAndAnswers.X += spaceBetweenAnswers.X;
+                spaceBetweenQuestionAndAnswers.Y += spaceBetweenAnswers.Y;
                 _baseControl.Controls.Add(radionButton);
                 
             }

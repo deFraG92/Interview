@@ -22,6 +22,7 @@ namespace Interview
             InitializeComponent();
             _questionMaker = questionMaker;
             InterviewThemesInit();
+            Options.OptionsLoaderInit();
             //CalendarTest();
         }
 
