@@ -24,6 +24,7 @@ namespace Interview.InterviewWorker
             _dataLoader = new OptionsDataLoader();
             InitOptions();
         }
+
         private static void InitOptions()
         {
             try
@@ -43,8 +44,8 @@ namespace Interview.InterviewWorker
             {
                 throw new Exception("Options.InitOptions " + exp);
             }
-            
         }
+
         public static Point QuestionLocation { get; private set; }
         public static Point SpaceBetweenAnswers { get; private set; }
         public static Point SpaceBetweenQuestionAndAnswers { get; private set; }

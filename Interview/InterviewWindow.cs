@@ -16,7 +16,7 @@ namespace Interview
         {
             InitializeComponent();
             _questionMaker = questionMaker;
-            _questionMaker.QuestionMakerInit(this);
+            _questionMaker.QuestionsAndAnswersInit(this);
             //Admin Tools
             Question_Lbl.Location = Options.QuestionLocation;
             Prev_But.Visible = Options.HaveBackward;

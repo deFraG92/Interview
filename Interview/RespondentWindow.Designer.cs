@@ -63,9 +63,9 @@
             // 
             this.ChooseTheme_CMB.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
             this.ChooseTheme_CMB.FormattingEnabled = true;
-            this.ChooseTheme_CMB.Location = new System.Drawing.Point(192, 84);
+            this.ChooseTheme_CMB.Location = new System.Drawing.Point(166, 82);
             this.ChooseTheme_CMB.Name = "ChooseTheme_CMB";
-            this.ChooseTheme_CMB.Size = new System.Drawing.Size(164, 24);
+            this.ChooseTheme_CMB.Size = new System.Drawing.Size(309, 24);
             this.ChooseTheme_CMB.TabIndex = 2;
             // 
             // FIO_LBL
@@ -82,7 +82,7 @@
             // 
             this.Theme_LBL.AutoSize = true;
             this.Theme_LBL.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.Theme_LBL.Location = new System.Drawing.Point(28, 87);
+            this.Theme_LBL.Location = new System.Drawing.Point(2, 85);
             this.Theme_LBL.Name = "Theme_LBL";
             this.Theme_LBL.Size = new System.Drawing.Size(158, 16);
             this.Theme_LBL.TabIndex = 4;

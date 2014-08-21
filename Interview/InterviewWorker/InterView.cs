@@ -15,7 +15,7 @@ namespace Interview.InterviewWorker
         private static OrderedDictionary _questionsList;
         private static Dictionary<Question, int> _resultScoreList;
         private static string _interviewThemeName;
-        private static DataLoader _questionLoader;
+        private static DataLoader _dataLoader;
         private static string _respondentName;
         private static string _respondentBirthDate;
         private static Question[] _questions;
@@ -23,11 +23,21 @@ namespace Interview.InterviewWorker
 
         public static void Start()
         {
-            _questionLoader =
+            _dataLoader =
                 new BaseDataLoader(@"E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\Interview");
         }
 
-        public static void Init()
+        public static bool CheckForInterviewCompleteness()
+        {
+            return InterviewCompleteness();
+        }
+
+        public static void QuestionPositionInit()
+        {
+            SetFirstQuestionId();
+        }
+
+        public static void InterviewInit()
         {
             _questionsList = new OrderedDictionary();
             _resultScoreList = new Dictionary<Question, int>();
@@ -70,7 +80,7 @@ namespace Interview.InterviewWorker
                 if (!_resultScoreList.ContainsKey(_questions[_questionNumber]))
                 {
                     _resultScoreList.Add(_questions[_questionNumber], answerScore);
-                    //_questionLoader.SetDataTable(SetDataType.AnswerResult);
+                    //_dataLoader.SetDataTable(SetDataType.AnswerResult);
                 }
                 else
                 {
@@ -89,7 +99,7 @@ namespace Interview.InterviewWorker
 
         public static DataTable GetInterviewThemes()
         {
-            return _questionLoader.GetDataTable(GetDataType.Theme);
+            return _dataLoader.GetDataTable(GetDataType.Theme);
         }
 
         public static void SetInterviewTheme(string themeName)
@@ -169,12 +179,12 @@ namespace Interview.InterviewWorker
             _respondentBirthDate = birthDate;
         }
 
-
+        // Remove to BaseDataLoader
         private static void QuestionsAndAnswersInit()
         {
             if ((_interviewThemeName != null) & (_interviewThemeName != string.Empty))
             {
-                var dataTable = _questionLoader.GetDataTable(GetDataType.QuestionsAnswersScores);
+                var dataTable = _dataLoader.GetDataTable(GetDataType.QuestionsAnswersScores);
                 for (var i = 0; i < dataTable.Rows.Count; i++)
                 {
                     var question = new Question() {Name = dataTable.Rows[i][0].ToString()};
@@ -192,6 +202,25 @@ namespace Interview.InterviewWorker
                 }
                 _questions = new Question[_questionsList.Count];
                 _questionsList.Keys.CopyTo(_questions, 0);
+            }
+        }
+
+        private static bool InterviewCompleteness()
+        {
+            var interviewCompleteness = _dataLoader.GetDataTable(GetDataType.InterviewCompleteness);
+            if (interviewCompleteness != null)
+            {
+                return Convert.ToBoolean(interviewCompleteness.Rows[0][0]);
+            }
+            return false;
+        }
+
+        private static void SetFirstQuestionId()
+        {
+            var firstQuestionId = _dataLoader.GetDataTable(GetDataType.FirstQuestionId);
+            if (firstQuestionId != null)
+            {
+                _questionNumber = Convert.ToInt32(firstQuestionId.Rows[0][0]);
             }
         }
     }

@@ -26,10 +26,20 @@ namespace Interview.InterviewWorker
            InterView.Start();
         }
 
-        public void QuestionMakerInit(Control baseControl)
+        public bool CheckForInterviewCompleteness()
+        {
+            return InterView.CheckForInterviewCompleteness();
+        }
+
+        public void QuestionPositionInit()
+        {
+            InterView.QuestionPositionInit();
+        }
+
+        public void QuestionsAndAnswersInit(Control baseControl)
         {
             _baseControl = baseControl;
-            InterView.Init();
+            InterView.InterviewInit();
         }
 
         public DataTable GetThemeNames()

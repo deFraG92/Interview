@@ -1,12 +1,4 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
-using System.Collections.Specialized;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using Interview.InterviewWorker;
 
@@ -17,10 +9,10 @@ namespace Interview
         private readonly QuestionMaker _questionMaker;
         private bool _rightFio;
         private bool _rightBirthDate;
-        public RespondentWindow(QuestionMaker questionMaker)
+        public RespondentWindow()
         {
             InitializeComponent();
-            _questionMaker = questionMaker;
+            _questionMaker = new QuestionMaker();
             InterviewThemesInit();
             Options.OptionsLoaderInit();
             //CalendarTest();
@@ -44,7 +36,10 @@ namespace Interview
             {
                 _rightFio = true;
                 _questionMaker.SetBirthDate(Birthday_Picker.Value);
-                Close();
+                var window = new StartInterviewWindow(_questionMaker);
+                window.ShowDialog();
+                var window2 = new InterviewWindow(_questionMaker);
+                window2.ShowDialog();
             }
         }
 
@@ -64,7 +59,6 @@ namespace Interview
         private void Birthday_Picker_ValueChanged(object sender, EventArgs e)
         {
             _rightBirthDate = true;
-            
         }
     }
 }
