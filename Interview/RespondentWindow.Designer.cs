@@ -28,7 +28,7 @@
         /// </summary>
         private void InitializeComponent()
         {
-            this.InterviewStart_BUT = new System.Windows.Forms.Button();
+            this.Continue_But = new System.Windows.Forms.Button();
             this.FIO_TEXTBOX = new System.Windows.Forms.TextBox();
             this.ChooseTheme_CMB = new System.Windows.Forms.ComboBox();
             this.FIO_LBL = new System.Windows.Forms.Label();
@@ -37,16 +37,16 @@
             this.label1 = new System.Windows.Forms.Label();
             this.SuspendLayout();
             // 
-            // InterviewStart_BUT
+            // Continue_But
             // 
-            this.InterviewStart_BUT.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
-            this.InterviewStart_BUT.Location = new System.Drawing.Point(338, 114);
-            this.InterviewStart_BUT.Name = "InterviewStart_BUT";
-            this.InterviewStart_BUT.Size = new System.Drawing.Size(137, 44);
-            this.InterviewStart_BUT.TabIndex = 0;
-            this.InterviewStart_BUT.Text = "Начать тестирование";
-            this.InterviewStart_BUT.UseVisualStyleBackColor = true;
-            this.InterviewStart_BUT.Click += new System.EventHandler(this.InterviewStart_BUT_Click);
+            this.Continue_But.Font = new System.Drawing.Font("Microsoft Sans Serif", 9.75F, System.Drawing.FontStyle.Bold, System.Drawing.GraphicsUnit.Point, ((byte)(204)));
+            this.Continue_But.Location = new System.Drawing.Point(338, 114);
+            this.Continue_But.Name = "Continue_But";
+            this.Continue_But.Size = new System.Drawing.Size(137, 44);
+            this.Continue_But.TabIndex = 0;
+            this.Continue_But.Text = "Продолжить";
+            this.Continue_But.UseVisualStyleBackColor = true;
+            this.Continue_But.Click += new System.EventHandler(this.InterviewStart_BUT_Click);
             // 
             // FIO_TEXTBOX
             // 
@@ -123,7 +123,7 @@
             this.Controls.Add(this.FIO_LBL);
             this.Controls.Add(this.ChooseTheme_CMB);
             this.Controls.Add(this.FIO_TEXTBOX);
-            this.Controls.Add(this.InterviewStart_BUT);
+            this.Controls.Add(this.Continue_But);
             this.MaximumSize = new System.Drawing.Size(500, 200);
             this.MinimumSize = new System.Drawing.Size(500, 200);
             this.Name = "RespondentWindow";
@@ -136,7 +136,7 @@
 
         #endregion
 
-        private System.Windows.Forms.Button InterviewStart_BUT;
+        private System.Windows.Forms.Button Continue_But;
         private System.Windows.Forms.TextBox FIO_TEXTBOX;
         private System.Windows.Forms.ComboBox ChooseTheme_CMB;
         private System.Windows.Forms.Label FIO_LBL;

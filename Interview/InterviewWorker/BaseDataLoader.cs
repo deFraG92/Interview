@@ -9,6 +9,7 @@ namespace Interview.InterviewWorker
     {
         private readonly IDbConnection _dbConnection;
         private readonly bool _isConnected;
+        private int _respondentId = 0;
         public BaseDataLoader(string tns)
         {
             try
@@ -22,10 +23,11 @@ namespace Interview.InterviewWorker
             }
         }
 
-        public override DataTable GetDataTable(GetDataType getDataType)
+        public override DataTable GetDataTable(Enum getDataEnum)
         {
             if (_isConnected)
             {
+                var getDataType = (GetDataType) getDataEnum;
                 if ((getDataType == GetDataType.Answers) |
                     (getDataType == GetDataType.Questions) |
                     (getDataType == GetDataType.QuestionsAnswersScores) |
@@ -42,10 +44,11 @@ namespace Interview.InterviewWorker
 
         }
 
-        public override void SetDataTable(SetDataType setDataType)
+        public override void SetDataTable(Enum setDataEnum)
         {
             if (_isConnected)
             {
+                var setDataType = (SetDataType) setDataEnum;
                 if (setDataType == SetDataType.AnswerResult)
                 {
                     InsertAnswerResult();
@@ -135,9 +138,12 @@ namespace Interview.InterviewWorker
             {
                 var interviewId = interviewIdRow.Rows[0][0];
                 var newAnswerResultId = GetNewTableIndexId("main.AnswerResults");
-                var newRespondentId = CheckOrInsertRespondentAndGetId();
+                if (_respondentId == 0)
+                {
+                    _respondentId = CheckOrInsertRespondentAndGetId();
+                }
                 var query = "insert into main.AnswerResults(id, respondent_id, interview_id)" +
-                            " values('" + newAnswerResultId + "', '" + newRespondentId + "', '" + interviewId + "')";
+                            " values('" + newAnswerResultId + "', '" + _respondentId + "', '" + interviewId + "')";
                 _dbConnection.DmlOperation(query);
             }
         }

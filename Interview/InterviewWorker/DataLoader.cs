@@ -1,4 +1,5 @@
-﻿using System.Data;
+﻿using System;
+using System.Data;
 
 
 namespace Interview.InterviewWorker
@@ -24,7 +25,7 @@ namespace Interview.InterviewWorker
 
     public abstract class DataLoader
     {
-        public abstract DataTable GetDataTable(GetDataType getDataType);
-        public abstract void SetDataTable(SetDataType setDataType);
+        public abstract DataTable GetDataTable(Enum getDataEnum);
+        public abstract void SetDataTable(Enum setDataEnum);
     }
 }

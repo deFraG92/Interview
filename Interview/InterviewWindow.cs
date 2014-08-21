@@ -22,7 +22,7 @@ namespace Interview
             //
             GetQuestionAndAnswers(QuestionMove.Forward);
             var loader = new OptionsDataLoader();
-            loader.GetDataTable(GetDataType.Answers);
+            loader.GetDataTable(OptionName.QuestionLocation);
             //ParseInit();
         }
       

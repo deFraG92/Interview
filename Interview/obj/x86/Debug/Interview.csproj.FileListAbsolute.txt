@@ -25,3 +25,5 @@ E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\obj\x86\Debug\Interview.I
 E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\obj\x86\Debug\Interview.Properties.Resources.resources
 E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\obj\x86\Debug\Interview.RespondentWindow.resources
 E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\obj\x86\Debug\Interview.csproj.GenerateResource.Cache
+E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\bin\Debug\Interview.exe.config
+E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\obj\x86\Debug\Interview.StartInterviewWindow.resources
