@@ -84,7 +84,7 @@ namespace Interview.InterviewWorker
                 if (!_resultScoreList.ContainsKey(_questions[_questionNumber]))
                 {
                     _resultScoreList.Add(_questions[_questionNumber], answerScore);
-                    //_dataLoader.SetDataTable(SetDataType.AnswerResult);
+                    _dataLoader.SetDataTable(SetDataType.AnswerResult);
                 }
                 else
                 {
@@ -247,7 +247,7 @@ namespace Interview.InterviewWorker
             {
                 for (var i = 0; i < questionAndScoreResultRow.Count; i++)
                 {
-                    _resultScoreList.Add(new Question(){ Name = (string)questionAndScoreResultRow[0][0]}, 
+                    _resultScoreList.Add(new Question(){ Name = (string)questionAndScoreResultRow[i][0]}, 
                                          Convert.ToInt32(questionAndScoreResultRow[i][1]));
                     
                 }
