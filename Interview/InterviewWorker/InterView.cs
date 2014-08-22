@@ -35,12 +35,16 @@ namespace Interview.InterviewWorker
         public static void QuestionPositionInit()
         {
             SetFirstQuestionId();
+            SetResultScores();
         }
 
         public static void InterviewInit()
         {
             _questionsList = new OrderedDictionary();
-            _resultScoreList = new Dictionary<Question, int>();
+            if (_resultScoreList == null)
+            {
+                _resultScoreList = new Dictionary<Question, int>();
+            }
             QuestionsAndAnswersInit();
         }
 
@@ -157,16 +161,27 @@ namespace Interview.InterviewWorker
 
         public static object GetAnswerFromResultScoreList()
         {
-            var answerScore = _resultScoreList[_questions[_questionNumber]];
-            var answerScoreList = ((Answer) _questionsList[_questionNumber]).ScoreList;
-            foreach (var score in answerScoreList.Keys)
+            try
             {
-                if (answerScoreList[score] == answerScore)
+                if (_resultScoreList.ContainsKey(_questions[_questionNumber]))
                 {
-                    return score;
+                    var answerScore = _resultScoreList[_questions[_questionNumber]];
+                    var answerScoreList = ((Answer) _questionsList[_questionNumber]).ScoreList;
+                    foreach (var score in answerScoreList.Keys)
+                    {
+                        if (answerScoreList[score] == answerScore)
+                        {
+                            return score;
+                        }
+                    }
                 }
             }
+            catch (Exception exp)
+            {
+                throw new Exception("GetAnswerFromResultScoreList " + exp);
+            }
             return null;
+            
         }
 
         public static string GetBirthDate()
@@ -220,8 +235,24 @@ namespace Interview.InterviewWorker
             var firstQuestionId = _dataLoader.GetDataTable(GetDataType.FirstQuestionId);
             if (firstQuestionId != null)
             {
-                _questionNumber = Convert.ToInt32(firstQuestionId.Rows[0][0]);
+                _questionNumber = Convert.ToInt32(firstQuestionId.Rows[0][0]) - 1;
             }
         }
+
+        private static void SetResultScores()
+        {
+            var questionAndScoreResultRow = _dataLoader.GetDataTable(GetDataType.AnswerScores).Rows;
+            _resultScoreList = new Dictionary<Question, int>();
+            if (questionAndScoreResultRow.Count > 0)
+            {
+                for (var i = 0; i < questionAndScoreResultRow.Count; i++)
+                {
+                    _resultScoreList.Add(new Question(){ Name = (string)questionAndScoreResultRow[0][0]}, 
+                                         Convert.ToInt32(questionAndScoreResultRow[i][1]));
+                    
+                }
+            }
+        }
+
     }
 }

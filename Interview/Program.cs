@@ -16,7 +16,10 @@ namespace Interview
         {
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new RespondentWindow());
+            var questionMaker = new QuestionMaker();
+            Application.Run(new RespondentWindow(questionMaker));
+            Application.Run(new StartInterviewWindow(questionMaker));
+            Application.Run(new InterviewWindow(questionMaker));
         }
     }
 }

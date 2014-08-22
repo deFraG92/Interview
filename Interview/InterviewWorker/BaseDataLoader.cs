@@ -44,6 +44,10 @@ namespace Interview.InterviewWorker
                 {
                     return GetFirstQuestionId();
                 }
+                if (getDataType == GetDataType.AnswerScores)
+                {
+                    return GetScoresFromAnswerResults();
+                }
             }
             return null;
 
@@ -253,6 +257,27 @@ namespace Interview.InterviewWorker
             catch (Exception exp)
             {
                 throw new Exception("GetFirstQuestionId " + exp);
+            }
+        }
+
+        private DataTable GetScoresFromAnswerResults()
+        {
+            var query = " select Questions.Name, Interview.Score " +
+                        " from main.AnswerResults, " +
+                             " main.Interview, " +
+                             " main.Questions " +
+                        " where AnswerResults.interview_id = Interview.id " +
+                               " and Interview.question_id = Questions.id " +
+                               " and Interview.theme_id = '" + _interviewThemeId + "'" +
+                               " and AnswerResults.respondent_id = '" + _respondentId + "' ";
+            try
+            {
+                var result = _dbConnection.SelectFromDb(query);
+                return result;
+            }
+            catch (Exception exp)
+            {
+                throw new Exception("GetScoresFromAnswerResults " + exp);
             }
         }
 

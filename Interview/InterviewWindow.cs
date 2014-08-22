@@ -24,11 +24,10 @@ namespace Interview
             GetQuestionAndAnswers(QuestionMove.Forward);
            //ParseInit();
         }
-      
+
         private void Next_But_Click(object sender, EventArgs e)
         {
-            var isTrue = false;
-            _questionMaker.SetAnswer(out isTrue);
+            var isTrue = _questionMaker.SetAnswer();
             if (isTrue)
             {
                 GetQuestionAndAnswers(QuestionMove.Forward);

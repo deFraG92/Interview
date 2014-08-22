@@ -9,10 +9,10 @@ namespace Interview
         private readonly QuestionMaker _questionMaker;
         private bool _rightFio;
         private bool _rightBirthDate;
-        public RespondentWindow()
+        public RespondentWindow(QuestionMaker questionMaker)
         {
             InitializeComponent();
-            _questionMaker = new QuestionMaker();
+            _questionMaker = questionMaker;
             InterviewThemesInit();
             Options.OptionsLoaderInit();
             //CalendarTest();
@@ -36,10 +36,7 @@ namespace Interview
             {
                 _rightFio = true;
                 _questionMaker.SetBirthDate(Birthday_Picker.Value);
-                var window = new StartInterviewWindow(_questionMaker);
-                window.ShowDialog();
-                var window2 = new InterviewWindow(_questionMaker);
-                window2.ShowDialog();
+                Close();
             }
         }
 
@@ -50,7 +47,6 @@ namespace Interview
                 if (MessageBox.Show("Вы уверены, что хотите прервать тестирование?", "INFO",
                     MessageBoxButtons.OKCancel) == DialogResult.OK)
                 {
-                    Application.ExitThread();
                     Application.Exit();
                 }
             }

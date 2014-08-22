@@ -3,8 +3,6 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Drawing;
-using System.Linq;
-using System.Text;
 using System.Windows.Forms;
 using System.Text.RegularExpressions;
 
@@ -60,6 +58,7 @@ namespace Interview.InterviewWorker
 
         public object GetQuestion(QuestionMove questionMove)
         {
+            DeleteCurrentQuestionAndSetDefaults();
             var question = InterView.GetQuestion(questionMove);
             return question;
         }
@@ -68,7 +67,6 @@ namespace Interview.InterviewWorker
         {
             try
             {
-                DeleteCurrentQuestionAndSetDefaults();
                 var list = InterView.GetAnswersOnQuestion(question);
                 SetAnswerSettings(list, questionMove);
             }
@@ -78,16 +76,15 @@ namespace Interview.InterviewWorker
             }
         }
 
-        public void SetAnswer(out bool isTrue)
+        public bool SetAnswer()
         {
-            isTrue = false;
             var text = ChooseAnswerForQuestion();
             if (text != null)
             {
-                DeleteCurrentQuestionAndSetDefaults();
                 InterView.SetAnswer(text);
-                isTrue = true;
+                return true;
             }
+            return false;
         }
 
         public bool SetRespondentName(string respondentName)
@@ -140,12 +137,20 @@ namespace Interview.InterviewWorker
 
         private void DeleteCurrentQuestionAndSetDefaults()
         {
+            var collection = new List<Control>();
             foreach (var control in _baseControl.Controls)
             {
                 var button = control as RadioButton;
                 if (button != null)
                 {
-                    _baseControl.Controls.Remove((RadioButton) control);
+                    collection.Add(button);
+                }
+            }
+            foreach (var elem in collection)
+            {
+                if (_baseControl.Controls.Contains(elem))
+                {
+                    _baseControl.Controls.Remove(elem);
                 }
             }
         }
@@ -166,12 +171,9 @@ namespace Interview.InterviewWorker
                     Font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold),
                     Anchor = AnchorStyles.Bottom
                 };
-                if (questionMove == QuestionMove.BackWard)
+                if (element == InterView.GetAnswerFromResultScoreList())
                 {
-                    if (element == InterView.GetAnswerFromResultScoreList())
-                    {
                         radionButton.Checked = true;
-                    }
                 }
                 spaceBetweenQuestionAndAnswers.X += spaceBetweenAnswers.X;
                 spaceBetweenQuestionAndAnswers.Y += spaceBetweenAnswers.Y;
