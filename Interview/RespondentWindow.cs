@@ -15,7 +15,6 @@ namespace Interview
             _questionMaker = questionMaker;
             InterviewThemesInit();
             Options.OptionsLoaderInit();
-            //CalendarTest();
         }
 
         private void InterviewThemesInit()

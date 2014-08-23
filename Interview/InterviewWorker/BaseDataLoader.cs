@@ -208,6 +208,21 @@ namespace Interview.InterviewWorker
                 {
                     _interviewThemeId =  Convert.ToInt32(_dbConnection.SelectFromDb(query).Rows[0][0]);
                     _respondentId = Convert.ToInt32(respondentIdRow.Rows[0][0]);
+                    query = "select AnswerResults.id " +
+                            " from main.AnswerResults, " +
+                                 " main.Interview " +
+                            " where Interview.theme_id = '" + _interviewThemeId + "'" +
+                                  " and AnswerResults.respondent_id = '" + _respondentId + "' " +
+                                  " and Interview.id = AnswerResults.interview_id ";
+                    var check = _dbConnection.SelectFromDb(query);
+                    if (check.Rows.Count == 0)
+                    {
+                        check.Columns.Add(new DataColumn() {DataType = typeof(int)});
+                        var newRow = check.NewRow();
+                        newRow[0] = 0;
+                        check.Rows.Add(newRow);
+                        return check;
+                    }
                     query = " select " +
                             "( " +
                             " select count(distinct Interview.question_id) " +
@@ -248,7 +263,8 @@ namespace Interview.InterviewWorker
                         " from main.AnswerResults, " +
                              " main.Interview " +
                         " where AnswerResults.interview_id = Interview.id " +
-                              " and Interview.theme_id = '" + _interviewThemeId + "'";
+                              " and Interview.theme_id = '" + _interviewThemeId + "'" +
+                              " and AnswerResults.respondent_id = '" + _respondentId + "' ";
             try
             {
                 var result = _dbConnection.SelectFromDb(query);

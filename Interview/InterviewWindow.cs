@@ -17,12 +17,10 @@ namespace Interview
             InitializeComponent();
             _questionMaker = questionMaker;
             _questionMaker.QuestionsAndAnswersInit(this);
-            //Admin Tools
             Question_Lbl.Location = Options.QuestionLocation;
             Prev_But.Visible = Options.HaveBackward;
-            //
             GetQuestionAndAnswers(QuestionMove.Forward);
-           //ParseInit();
+            //ParseInit();
         }
 
         private void Next_But_Click(object sender, EventArgs e)
@@ -64,7 +62,7 @@ namespace Interview
                 new List<char>(){'*', '/'},
                 new List<char>(){'+', '-'}
             };
-           var result = GetFinalResultOfPolishRecord("('10'+'A')*'3'");
+           var result = GetFinalResultOfPolishRecord("('[10]'+'[A]')*'{3}'");
        }
 
         private string GetFinalResultOfPolishRecord(string str)
@@ -176,7 +174,7 @@ namespace Interview
                         return doubleA * doubleB;
 
                     case '/':
-                        return doubleB != 0 ? doubleB / doubleA : 0 ;
+                        return doubleA != 0 ? doubleB / doubleA : 0 ;
 
                     case '^':
                         return Math.Pow(doubleB, doubleA);

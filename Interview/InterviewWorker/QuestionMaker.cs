@@ -178,7 +178,6 @@ namespace Interview.InterviewWorker
                 spaceBetweenQuestionAndAnswers.X += spaceBetweenAnswers.X;
                 spaceBetweenQuestionAndAnswers.Y += spaceBetweenAnswers.Y;
                 _baseControl.Controls.Add(radionButton);
-                
             }
         }
 

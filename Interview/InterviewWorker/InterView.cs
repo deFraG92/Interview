@@ -20,6 +20,7 @@ namespace Interview.InterviewWorker
         private static string _respondentBirthDate;
         private static Question[] _questions;
         private static int _questionNumber = -1;
+        private static bool _haveHistory;
 
         public static void Start()
         {
@@ -36,6 +37,7 @@ namespace Interview.InterviewWorker
         {
             SetFirstQuestionId();
             SetResultScores();
+            _haveHistory = Options.HaveHistory;
         }
 
         public static void InterviewInit()
