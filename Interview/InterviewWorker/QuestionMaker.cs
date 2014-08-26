@@ -24,9 +24,14 @@ namespace Interview.InterviewWorker
            InterView.Start();
         }
 
-        public bool CheckForInterviewCompleteness()
+        public bool GetInterviewCompleteness()
         {
-            return InterView.CheckForInterviewCompleteness();
+            return InterView.GetInterviewCompleteness();
+        }
+
+        public void SetInterviewCompleteness()
+        {
+            InterView.SetInterviewCompleteness();
         }
 
         public void QuestionPositionInit()
@@ -100,8 +105,9 @@ namespace Interview.InterviewWorker
 
         public void SetBirthDate(DateTime time)
         {
-            var month = (time.Month.ToString().Length == 1) ? "0" + time.Month.ToString() : time.Month.ToString();
-            var date = string.Format("{0}-{1}-{2}", time.Year, month, time.Day);
+            var month = (time.Month.ToString().Length == 1) ? "0" + time.Month : time.Month.ToString();
+            var day = (time.Day.ToString().Length == 1) ? "0" + time.Day : time.Day.ToString();
+            var date = string.Format("{0}-{1}-{2}", time.Year, month, day);
             InterView.SetBirthDate(date);
         }
 

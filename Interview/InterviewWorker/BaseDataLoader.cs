@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Data;
+using System.Data.Odbc;
 using IDbConnection = Interview.DBWorker.IDbConnection;
 using Interview.DBWorker;
 
@@ -11,6 +12,7 @@ namespace Interview.InterviewWorker
         private readonly bool _isConnected;
         private int _respondentId = 0;
         private int _interviewThemeId;
+        private int _nextInterviewNum = 0;
         public BaseDataLoader(string tns)
         {
             try
@@ -58,9 +60,14 @@ namespace Interview.InterviewWorker
             if (_isConnected)
             {
                 var setDataType = (SetDataType) setDataEnum;
-                if (setDataType == SetDataType.AnswerResult)
+                if (setDataType == SetDataType.BaseOptionsInit)
                 {
-                    InsertAnswerResult();
+                    BaseOptionsInit();
+                }
+                if ( (setDataType == SetDataType.AnswerResultInsert)   |
+                    (setDataType == SetDataType.AnswerResultUpdate) )
+                {
+                    InsertAnswerResult(setDataType);
                 }
             }
         }
@@ -139,21 +146,80 @@ namespace Interview.InterviewWorker
             }
         }
 
-        private void InsertAnswerResult()
+        private void InsertAnswerResult(SetDataType dataType)
         {
             var currQuestion = InterView.GetCurrentQuestionAndAnswer().Key;
             var interviewIdRow = GetInteviewId(currQuestion, InterView.GetScoreByQuestion(currQuestion));
             if (interviewIdRow.Rows.Count > 0)
             {
                 var interviewId = interviewIdRow.Rows[0][0];
-                var newAnswerResultId = GetNewTableIndexId("main.AnswerResults");
-                if (_respondentId == 0)
+                if (dataType == SetDataType.AnswerResultInsert)
                 {
-                    _respondentId = CheckOrInsertRespondentAndGetId();
+                    AddAnswerResult(interviewId);
                 }
-                var query = "insert into main.AnswerResults(id, respondent_id, interview_id)" +
-                            " values('" + newAnswerResultId + "', '" + _respondentId + "', '" + interviewId + "')";
+                else
+                {
+                    UpdateAnswerResult(currQuestion, interviewId);
+                }
+            }
+        }
+
+        private void AddAnswerResult(object interviewId)
+        {
+            var newAnswerResultId = GetNewTableIndexId("main.AnswerResults");
+            var query = "insert into main.AnswerResults(id, respondent_id, interview_id, interview_number)" +
+                        " values('" + newAnswerResultId + "', '" + _respondentId + "', '" + interviewId + "', '" + _nextInterviewNum + "')";
+            try
+            {
                 _dbConnection.DmlOperation(query);
+            }
+            catch (Exception exp)
+            {
+                throw new Exception("AddAnswerResult " + exp);
+            }
+        }
+
+        private void UpdateAnswerResult(Question currQuestion, object interviewId)
+        {
+            var query = "select max(AnswerResults.id) " +
+                        " from main.AnswerResults, " +
+                        " main.Interview," +
+                        " main.Questions " +
+                        " where Interview.theme_id = '" + _interviewThemeId + "'" +
+                        " and AnswerResults.respondent_id = '" + _respondentId + "' " +
+                        " and Interview.id = AnswerResults.interview_id " +
+                        " and Interview.question_id = Questions.id " +
+                        " and Questions.Name = '" + currQuestion.Name + "'";
+            try
+            {
+                var answerResultRow = _dbConnection.SelectFromDb(query);
+                if (answerResultRow.Rows[0][0].ToString() != "")
+                {
+                    var answerResultId = answerResultRow.Rows[0][0];
+                    if (InterView.GetHaveHistory())
+                    {
+                        query = " update main.AnswerResults" +
+                                " set Interview_id = '" + interviewId + "'" +
+                                " where id = '" + answerResultId + "'";
+                    }
+                    else
+                    {
+                        var nextInterviewNum = InterView.GetInterviewCompleteness() ? _nextInterviewNum : _nextInterviewNum + 1;
+                            query = " update main.AnswerResults" +
+                                    " set Interview_id = '" + interviewId + "'" +
+                                    ", interview_number = '" + nextInterviewNum + "'" +
+                                    " where id = '" + answerResultId + "'";
+                    }
+                    _dbConnection.DmlOperation(query);
+                }
+                else
+                {
+                    AddAnswerResult(interviewId);
+                }
+            }
+            catch (Exception exp)
+            {
+                throw new Exception("UpdateAnswerResult" + exp);
             }
         }
 
@@ -163,9 +229,15 @@ namespace Interview.InterviewWorker
                         " from main.Respondents " +
                         " where trim(main.Respondents.FIO) = '" + respondentName + "'" +
                         " and main.Respondents.birthday = '" + birthDay + "'";
-            var result = _dbConnection.SelectFromDb(query);
-            return result;
-
+            try
+            {
+                var result = _dbConnection.SelectFromDb(query);
+                return result;
+            }
+            catch (Exception exp)
+            {
+                throw new Exception("CheckRespondentAndGetId " + exp);
+            }
         }
         
         private int CheckOrInsertRespondentAndGetId()
@@ -189,72 +261,127 @@ namespace Interview.InterviewWorker
         private int GetNewTableIndexId(string tableName)
         {
             var query = "select max(id) from " + tableName;
-            var result = _dbConnection.SelectFromDb(query).Rows[0][0];
-            if (result.ToString() != "")
-                return Convert.ToInt16(result) + 1;
-            return 1;
+            try
+            {
+                var result = _dbConnection.SelectFromDb(query).Rows[0][0];
+                if (result.ToString() != "")
+                    return Convert.ToInt16(result) + 1;
+                return 1;
+            }
+            catch (Exception exp)
+            {
+                throw new Exception("GetNewTableIndexId " + exp);
+            }
+            
         }
+
+        private int GetMaxInterviewNum()
+        {
+            var query = " select max(AnswerResults.Interview_number) " +
+                                " from main.AnswerResults," +
+                                     " main.Interview " +
+                                " where Interview.theme_id = '" + _interviewThemeId + "'" +
+                                      " and AnswerResults.respondent_id = '" + _respondentId + "' " +
+                                      " and Interview.id = AnswerResults.interview_id ";
+            try
+            {
+                var maxInterviewNum = _dbConnection.SelectFromDb(query);
+                if (maxInterviewNum.Rows[0][0].ToString() != "")
+                {
+                    return Convert.ToInt32(maxInterviewNum.Rows[0][0]);
+                }
+                
+            }
+            catch (Exception exp)
+            {
+                throw new Exception("GetMaxInterviewNum " + exp);
+            }
+            return 0;
+        }
+
+        private int GetInterviewThemeId(string interviewTheme)
+        {
+            var query = " select Themes.Id " +
+                          " from main.Themes " +
+                          " where Themes.Name = '" + interviewTheme + "'";
+            try
+            {
+                var themeRow = _dbConnection.SelectFromDb(query);
+                if (themeRow.Rows.Count > 0)
+                {
+                    return Convert.ToInt32(themeRow.Rows[0][0]);
+                }
+                return 0;
+            }
+            catch (Exception exp)
+            {
+                throw new Exception("GetInterviewThemeId: " + exp);
+            }
+        }
+
+        private void BaseOptionsInit()
+        {
+            _respondentId = CheckOrInsertRespondentAndGetId();
+            _interviewThemeId = GetInterviewThemeId(InterView.GetInterviewTheme());
+            var maxInterviewNum = GetMaxInterviewNum();
+            _nextInterviewNum = maxInterviewNum == 0 ? 1 : maxInterviewNum;
+        }
+
 
         private DataTable CheckForInterviewCompleteness()
         {
-            var respondentIdRow = CheckRespondentAndGetId(InterView.GetRespondentName(), InterView.GetBirthDate());
-            if (respondentIdRow.Rows.Count != 0)
+            try
             {
-                var interviewTheme = InterView.GetInterviewTheme();
-                var query = " select Themes.Id " +
-                            " from main.Themes " +
-                            " where Themes.Name = '" + interviewTheme + "'";
-                try
-                {
-                    _interviewThemeId =  Convert.ToInt32(_dbConnection.SelectFromDb(query).Rows[0][0]);
-                    _respondentId = Convert.ToInt32(respondentIdRow.Rows[0][0]);
-                    query = "select AnswerResults.id " +
-                            " from main.AnswerResults, " +
-                                 " main.Interview " +
-                            " where Interview.theme_id = '" + _interviewThemeId + "'" +
-                                  " and AnswerResults.respondent_id = '" + _respondentId + "' " +
-                                  " and Interview.id = AnswerResults.interview_id ";
-                    var check = _dbConnection.SelectFromDb(query);
-                    if (check.Rows.Count == 0)
-                    {
-                        check.Columns.Add(new DataColumn() {DataType = typeof(int)});
-                        var newRow = check.NewRow();
-                        newRow[0] = 0;
-                        check.Rows.Add(newRow);
-                        return check;
-                    }
-                    query = " select " +
-                            "( " +
-                            " select count(distinct Interview.question_id) " +
-                            " from main.Interview " +
-                            " where Interview.theme_id = '" + _interviewThemeId + "'" +
-                            ") = " +
-                            "( " +
-                            " select count(AnswerResults.interview_id) " +
+                var query = "select AnswerResults.id " +
                             " from main.AnswerResults, " +
                             " main.Interview " +
-                            " where AnswerResults.interview_id = Interview.id " +
-                            " and Interview.theme_id = '" + _interviewThemeId + "'" +
+                            " where Interview.theme_id = '" + _interviewThemeId + "'" +
                             " and AnswerResults.respondent_id = '" + _respondentId + "' " +
-                            " )";
-                    var identityRow = _dbConnection.SelectFromDb(query);
-                    var identity = Convert.ToInt32(identityRow.Rows[0][0]);
-                    if (identity == 0)
-                    {
-                        identityRow.Rows[0][0] = 1;
-                    }
-                    else
-                    {
-                        identityRow.Rows[0][0] = 0;
-                    }
-                    return identityRow;
-                }
-                catch (Exception exp)
+                            " and Interview.id = AnswerResults.interview_id ";
+                var check = _dbConnection.SelectFromDb(query);
+                if (check.Rows.Count == 0)
                 {
-                    throw new Exception("GetLastQuestionId " + exp);
+                    check.Columns.Add(new DataColumn() {DataType = typeof (int)});
+                    var newRow = check.NewRow();
+                    newRow[0] = 0;
+                    check.Rows.Add(newRow);
+                    return check;
                 }
+                query = " select " +
+                        "( " +
+                        " select count(distinct Interview.question_id) " +
+                        " from main.Interview " +
+                        " where Interview.theme_id = '" + _interviewThemeId + "'" +
+                        ") = " +
+                        "( " +
+                        " select count(AnswerResults.interview_id) " +
+                        " from main.AnswerResults, " +
+                        " main.Interview " +
+                        " where AnswerResults.interview_id = Interview.id " +
+                        " and Interview.theme_id = '" + _interviewThemeId + "'" +
+                        " and AnswerResults.respondent_id = '" + _respondentId + "' " +
+                        " and AnswerResults.Interview_number = '" + _nextInterviewNum + "'" +
+                        " )";
+                var identityRow = _dbConnection.SelectFromDb(query);
+                var identity = Convert.ToInt32(identityRow.Rows[0][0]);
+                if (identity == 0)
+                {
+                    identityRow.Rows[0][0] = 1;
+                }
+                else
+                {
+                    identityRow.Rows[0][0] = 0;
+                    if (InterView.GetHaveHistory())
+                    {
+                        _nextInterviewNum++;
+                    }
+                }
+                return identityRow;
             }
-            return null;
+            catch (Exception exp)
+            {
+                throw new Exception("GetLastQuestionId " + exp);
+            }
         }
 
         private DataTable GetFirstQuestionId()
@@ -264,7 +391,8 @@ namespace Interview.InterviewWorker
                              " main.Interview " +
                         " where AnswerResults.interview_id = Interview.id " +
                               " and Interview.theme_id = '" + _interviewThemeId + "'" +
-                              " and AnswerResults.respondent_id = '" + _respondentId + "' ";
+                              " and AnswerResults.respondent_id = '" + _respondentId + "' " +
+                              " and AnswerResults.interview_number = '" + _nextInterviewNum + "'";
             try
             {
                 var result = _dbConnection.SelectFromDb(query);
@@ -285,7 +413,8 @@ namespace Interview.InterviewWorker
                         " where AnswerResults.interview_id = Interview.id " +
                                " and Interview.question_id = Questions.id " +
                                " and Interview.theme_id = '" + _interviewThemeId + "'" +
-                               " and AnswerResults.respondent_id = '" + _respondentId + "' ";
+                               " and AnswerResults.respondent_id = '" + _respondentId + "' " +
+                               " and AnswerResults.interview_number = '" + _nextInterviewNum + "'";
             try
             {
                 var result = _dbConnection.SelectFromDb(query);

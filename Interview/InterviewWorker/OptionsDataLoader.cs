@@ -55,8 +55,8 @@ namespace Interview.InterviewWorker
         {
             try
             {
-                var query = "select main.AdminTools.Value ";
-                query += " from main.AdminTools where ";
+                var query = "select main.AdminTools.Value " +
+                            " from main.AdminTools where ";
                 for (int i = 0; i < fieldsName.Length; i ++)
                 {
                     query += " main.AdminTools.Option = '" + fieldsName[i] + "'";

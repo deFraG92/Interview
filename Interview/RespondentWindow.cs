@@ -35,6 +35,7 @@ namespace Interview
             {
                 _rightFio = true;
                 _questionMaker.SetBirthDate(Birthday_Picker.Value);
+                _questionMaker.SetInterviewCompleteness();
                 Close();
             }
         }

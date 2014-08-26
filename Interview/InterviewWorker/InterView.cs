@@ -2,11 +2,9 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.Specialized;
-using System.ComponentModel;
+
 using System.Data;
 using System.Linq;
-using System.Net.Mail;
-using System.Windows.Forms;
 
 namespace Interview.InterviewWorker
 {
@@ -21,6 +19,7 @@ namespace Interview.InterviewWorker
         private static Question[] _questions;
         private static int _questionNumber = -1;
         private static bool _haveHistory;
+        private static bool _interviewCompleteness;
 
         public static void Start()
         {
@@ -28,16 +27,22 @@ namespace Interview.InterviewWorker
                 new BaseDataLoader(@"E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\Interview");
         }
 
-        public static bool CheckForInterviewCompleteness()
+        public static void SetInterviewCompleteness()
         {
-            return InterviewCompleteness();
+            _haveHistory = Options.HaveHistory;
+            _dataLoader.SetDataTable(SetDataType.BaseOptionsInit);
+            InterviewCompleteness();
+        }
+
+        public static bool GetInterviewCompleteness()
+        {
+            return _interviewCompleteness;
         }
 
         public static void QuestionPositionInit()
         {
             SetFirstQuestionId();
             SetResultScores();
-            _haveHistory = Options.HaveHistory;
         }
 
         public static void InterviewInit()
@@ -86,14 +91,14 @@ namespace Interview.InterviewWorker
                 if (!_resultScoreList.ContainsKey(_questions[_questionNumber]))
                 {
                     _resultScoreList.Add(_questions[_questionNumber], answerScore);
-                    _dataLoader.SetDataTable(SetDataType.AnswerResult);
+                    _dataLoader.SetDataTable(_haveHistory ? SetDataType.AnswerResultInsert : SetDataType.AnswerResultUpdate);
                 }
                 else
                 {
                     if (_resultScoreList[_questions[_questionNumber]] != answerScore)
                     {
                         _resultScoreList[_questions[_questionNumber]] = answerScore;
-                        //update
+                        _dataLoader.SetDataTable(SetDataType.AnswerResultUpdate);
                     }
                 }
             }
@@ -196,6 +201,12 @@ namespace Interview.InterviewWorker
             _respondentBirthDate = birthDate;
         }
 
+        public static bool GetHaveHistory()
+        {
+            return _haveHistory;
+        }
+
+
         // Remove to BaseDataLoader
         private static void QuestionsAndAnswersInit()
         {
@@ -222,14 +233,13 @@ namespace Interview.InterviewWorker
             }
         }
 
-        private static bool InterviewCompleteness()
+        private static void InterviewCompleteness()
         {
             var interviewCompleteness = _dataLoader.GetDataTable(GetDataType.InterviewCompleteness);
             if (interviewCompleteness != null)
             {
-                return Convert.ToBoolean(interviewCompleteness.Rows[0][0]);
+                _interviewCompleteness = Convert.ToBoolean(interviewCompleteness.Rows[0][0]);
             }
-            return false;
         }
 
         private static void SetFirstQuestionId()
@@ -251,7 +261,6 @@ namespace Interview.InterviewWorker
                 {
                     _resultScoreList.Add(new Question(){ Name = (string)questionAndScoreResultRow[i][0]}, 
                                          Convert.ToInt32(questionAndScoreResultRow[i][1]));
-                    
                 }
             }
         }

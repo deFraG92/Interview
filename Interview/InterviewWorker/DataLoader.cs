@@ -19,7 +19,9 @@ namespace Interview.InterviewWorker
 
     public enum SetDataType
     {
-        AnswerResult,
+        BaseOptionsInit,
+        AnswerResultInsert,
+        AnswerResultUpdate,
         Respondent,
         Factor,
         FactorResult
