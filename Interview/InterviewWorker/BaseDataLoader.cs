@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Data;
 using System.Data.Odbc;
+using System.Drawing;
 using IDbConnection = Interview.DBWorker.IDbConnection;
 using Interview.DBWorker;
 
@@ -17,6 +18,7 @@ namespace Interview.InterviewWorker
         {
             try
             {
+                
                 _dbConnection = SqliteDbConnection.GetSqliteDbWorker();
                 _isConnected = _dbConnection.ConnectToDb(tns);
             }
@@ -49,6 +51,10 @@ namespace Interview.InterviewWorker
                 if (getDataType == GetDataType.AnswerScores)
                 {
                     return GetScoresFromAnswerResults();
+                }
+                if (getDataType == GetDataType.QuestionPicture)
+                {
+                    return GetPictureOnCurrQuestion();
                 }
             }
             return null;
@@ -426,6 +432,39 @@ namespace Interview.InterviewWorker
             }
         }
 
+        private DataTable GetPictureOnCurrQuestion()
+        {
+            try
+            {
+                var isConnect = DbImageLoader.ConnectToDb(_dbConnection);
+                var dataTable = new DataTable();
+                if (isConnect)
+                {
+                    var query = "select distinct Pictures.picture " +
+                                " from main.Pictures, " +
+                                     " main.Questions, " +
+                                     " main.Interview " +
+                                " where Pictures.id = Questions.id " +
+                                      " and Interview.question_id = Questions.id " +
+                                      " and Questions.name = '" + InterView.GetCurrentQuestionAndAnswer().Key.Name + "'" +
+                                      " and Interview.theme_id = '" + _interviewThemeId + "'";
+                    var imgByte = DbImageLoader.GetBytePictureFromDb(query);
+                    if (imgByte != null)
+                    {
+                        var img = DbImageLoader.GetImageFromImgBytes(imgByte, Options.PictureSize);
+                        dataTable.Columns.Add(new DataColumn {DataType = typeof (Bitmap)});
+                        var newRow = dataTable.NewRow();
+                        newRow[0] = img;
+                        dataTable.Rows.Add(newRow);
+                    }
+                }
+                return dataTable;
+            }
+            catch (Exception exp)
+            {
+                throw new Exception("GetPictureOnCurrQuestion " + exp);
+            }
+        }
     }
 
 }

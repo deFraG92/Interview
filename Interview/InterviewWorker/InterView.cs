@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.Specialized;
 
 using System.Data;
+using System.Drawing;
 using System.Linq;
 
 namespace Interview.InterviewWorker
@@ -206,6 +207,11 @@ namespace Interview.InterviewWorker
             return _haveHistory;
         }
 
+        public static Image GetImageOnCurrQuestion()
+        {
+            var imgRow = _dataLoader.GetDataTable(GetDataType.QuestionPicture);
+            return imgRow.Rows.Count > 0 ? (Image)imgRow.Rows[0][0] : null;
+        }
 
         // Remove to BaseDataLoader
         private static void QuestionsAndAnswersInit()

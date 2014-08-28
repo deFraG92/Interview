@@ -14,7 +14,8 @@ namespace Interview.InterviewWorker
         RespondentId,
         FirstQuestionId,
         InterviewCompleteness,
-        AnswerScores
+        AnswerScores,
+        QuestionPicture
     }
 
     public enum SetDataType

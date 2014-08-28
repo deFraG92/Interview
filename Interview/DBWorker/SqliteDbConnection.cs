@@ -13,7 +13,7 @@ namespace Interview.DBWorker
     public class SqliteDbConnection : IDbConnection
     {
         private bool _isConnected;
-        private SQLiteConnection _sqLiteConnection;
+        private static SQLiteConnection _sqLiteConnection;
         private static SqliteDbConnection _sqliteDbConnection;
         
         private SqliteDbConnection()
@@ -30,6 +30,11 @@ namespace Interview.DBWorker
             return _sqliteDbConnection;
         }
 
+        public static SQLiteConnection GetSqlLiteConnection()
+        {
+            return _sqLiteConnection;
+        }
+        
         public bool ConnectToDb(string tns)
         {
             try
@@ -105,6 +110,11 @@ namespace Interview.DBWorker
         public bool IsConnected()
         {
             return _isConnected;
+        }
+
+        public SQLiteConnection GetConnection()
+        {
+            return _sqLiteConnection;
         }
     }
 }

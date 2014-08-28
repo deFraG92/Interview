@@ -40,6 +40,12 @@ namespace Interview.InterviewWorker
                         return GetAdminTools(new[] {"HAVE_BACKWARD"});
                     case OptionName.HaveHistory:
                         return GetAdminTools(new[] {"HAVE_HISTORY"});
+                    case OptionName.HavePicture:
+                        return GetAdminTools(new[] {"HAVE_PICTURES"});
+                    case OptionName.PictureLocation:
+                        return GetAdminTools(new[] {"PICTURE_LOCATION_X", "PICTURE_LOCATION_Y"});
+                    case OptionName.PictureSize:
+                        return GetAdminTools(new[] {"PICTURE_SIZE_X", "PICTURE_SIZE_Y"});
                 }
             }
             return null;

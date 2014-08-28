@@ -18,6 +18,7 @@ namespace Interview.InterviewWorker
     {
         private Control _baseControl;
         private Point _questionCoords;
+        private Graphics _graphics;
 
         public QuestionMaker()
         {
@@ -42,6 +43,11 @@ namespace Interview.InterviewWorker
         public void QuestionsAndAnswersInit(Control baseControl)
         {
             _baseControl = baseControl;
+            if (Options.HavePictures)
+            {
+                _baseControl.Paint += new PaintEventHandler(_baseControl_Paint);
+                _graphics = _baseControl.CreateGraphics();
+            }
             InterView.InterviewInit();
         }
 
@@ -65,6 +71,7 @@ namespace Interview.InterviewWorker
         {
             DeleteCurrentQuestionAndSetDefaults();
             var question = InterView.GetQuestion(questionMove);
+            _baseControl.Invalidate();
             return question;
         }
 
@@ -166,12 +173,18 @@ namespace Interview.InterviewWorker
             //admintools
             var spaceBetweenQuestionAndAnswers = Options.SpaceBetweenQuestionAndAnswers;
             var spaceBetweenAnswers = Options.SpaceBetweenAnswers;
+            var spaceBetweenQuestionAndPicture = Options.PictureLocation;
+            if (!Options.HavePictures)
+            {
+                spaceBetweenQuestionAndPicture = new Point(0, 0);
+            }
             //
             foreach (var element in answerList)
             {
                 var radionButton = new RadioButton()
                 {
-                    Location = new Point(_questionCoords.X + spaceBetweenQuestionAndAnswers.X, _questionCoords.Y + spaceBetweenQuestionAndAnswers.Y),
+                    Location = new Point(_questionCoords.X + spaceBetweenQuestionAndPicture.X + spaceBetweenQuestionAndAnswers.X,
+                                         _questionCoords.Y + spaceBetweenQuestionAndPicture.Y + spaceBetweenQuestionAndAnswers.Y),
                     Text = element.ToString(),
                     Size = new Size(200, 25),
                     Font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold),
@@ -187,7 +200,21 @@ namespace Interview.InterviewWorker
             }
         }
 
+        private void SetQuestionPicture()
+        {
+            var img = InterView.GetImageOnCurrQuestion();
+            if (img != null)
+            {
+                var newLocation = new Point(_questionCoords.X + Options.PictureLocation.X,
+                    _questionCoords.Y + Options.PictureLocation.Y);
+                _graphics.DrawImage(img, newLocation);
+            }
+        }
 
+        private void _baseControl_Paint(object sender, PaintEventArgs e)
+        {
+            SetQuestionPicture();
+        }
 
         private bool CheckForValidRespondentName(string respondentName)
         {
