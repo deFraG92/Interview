@@ -6,6 +6,7 @@ using System.Collections.Specialized;
 using System.Data;
 using System.Drawing;
 using System.Linq;
+using System.Runtime.Remoting.Messaging;
 
 namespace Interview.InterviewWorker
 {
@@ -21,7 +22,8 @@ namespace Interview.InterviewWorker
         private static int _questionNumber = -1;
         private static bool _haveHistory;
         private static bool _interviewCompleteness;
-        private static Dictionary<string, Image> _pictureDict; 
+        private static Dictionary<string, Image> _pictureDict;
+        private static bool _notAnsweredQuestions;
         
         public static void Start()
         {
@@ -65,6 +67,14 @@ namespace Interview.InterviewWorker
                     _questionNumber++;
                 if (questionMove == QuestionMove.BackWard)
                     _questionNumber--;
+                if ((_questionNumber >= _questions.Length) & (Options.CanMoveWithoutAnswer))
+                {
+                    _notAnsweredQuestions = true;
+                }
+                if (_notAnsweredQuestions)
+                {
+                    return CheckHavingQuestionInResultsScores();
+                }
                 return (_questions.Length > _questionNumber) & (_questionNumber >= 0) ? 
                     _questionNumber + 1 + ") " + _questions[_questionNumber].Name : null;
             }
@@ -94,14 +104,16 @@ namespace Interview.InterviewWorker
                 if (!_resultScoreList.ContainsKey(_questions[_questionNumber]))
                 {
                     _resultScoreList.Add(_questions[_questionNumber], answerScore);
-                    _dataLoader.SetDataTable(_haveHistory ? SetDataType.AnswerResultInsert : SetDataType.AnswerResultUpdate);
+                    if (answerScore != -1)
+                      _dataLoader.SetDataTable(_haveHistory ? SetDataType.AnswerResultInsert : SetDataType.AnswerResultUpdate);
                 }
                 else
                 {
                     if (_resultScoreList[_questions[_questionNumber]] != answerScore)
                     {
                         _resultScoreList[_questions[_questionNumber]] = answerScore;
-                        _dataLoader.SetDataTable(SetDataType.AnswerResultUpdate);
+                        if (answerScore != -1)
+                          _dataLoader.SetDataTable(SetDataType.AnswerResultUpdate);
                     }
                 }
             }
@@ -302,5 +314,30 @@ namespace Interview.InterviewWorker
             }
         }
 
+        private static string CheckHavingQuestionInResultsScores()
+        {
+            if (_resultScoreList.ContainsValue(-1))
+            {
+                try
+                {
+                    var needQuestion = _resultScoreList.Select(x => x).Where(x => x.Value == -1).ToArray()[0].Key.Name;
+                    for (var i = 0; i < _questions.Length; i++)
+                    {
+                        if (_questions[i].Name == needQuestion)
+                        {
+                            _questionNumber = i;
+                        }
+                    }
+                    return needQuestion;
+                }
+                catch (Exception exp)
+                {
+                    throw new Exception("CheckHavingQuestionInResultsScores " + exp);
+                }
+            }
+            _notAnsweredQuestions = false;
+            return null;
+        }
+        
     }
 }

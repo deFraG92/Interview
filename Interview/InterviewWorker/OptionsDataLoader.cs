@@ -46,6 +46,8 @@ namespace Interview.InterviewWorker
                         return GetAdminTools(new[] {"PICTURE_LOCATION_X", "PICTURE_LOCATION_Y"});
                     case OptionName.PictureSize:
                         return GetAdminTools(new[] {"PICTURE_SIZE_X", "PICTURE_SIZE_Y"});
+                    case OptionName.CanMoveWithoutAnswer:
+                        return GetAdminTools(new[] {"CAN_MOVE_WITHOUT_ANSWER"});
                 }
             }
             return null;

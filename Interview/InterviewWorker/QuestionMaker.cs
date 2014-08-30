@@ -72,8 +72,11 @@ namespace Interview.InterviewWorker
         {
             DeleteCurrentQuestionAndSetDefaults();
             var question = InterView.GetQuestion(questionMove);
-            _img = InterView.GetImageOnCurrQuestion();
-            _baseControl.Invalidate();
+            if (Options.HavePictures)
+            {
+                _img = InterView.GetImageOnCurrQuestion();
+                _baseControl.Invalidate();
+            }
             return question;
         }
 
@@ -93,12 +96,13 @@ namespace Interview.InterviewWorker
         public bool SetAnswer()
         {
             var text = ChooseAnswerForQuestion();
-            if (text != null)
+            if ( (!Options.CanMoveWithoutAnswer) & (text == null) )
             {
-                InterView.SetAnswer(text);
-                return true;
+                MessageBox.Show("Выберите ответ!");
+                return false;
             }
-            return false;
+            InterView.SetAnswer(text);
+            return true;
         }
 
         public bool SetRespondentName(string respondentName)
@@ -141,8 +145,6 @@ namespace Interview.InterviewWorker
                         }
                     }
                 }
-                return null;
-                //MessageBox.Show("Выберите ответ!");
             }
             catch (Exception exp)
             {
