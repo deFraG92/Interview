@@ -19,6 +19,7 @@ namespace Interview.InterviewWorker
         private Control _baseControl;
         private Point _questionCoords;
         private Graphics _graphics;
+        private Image _img;
 
         public QuestionMaker()
         {
@@ -71,6 +72,7 @@ namespace Interview.InterviewWorker
         {
             DeleteCurrentQuestionAndSetDefaults();
             var question = InterView.GetQuestion(questionMove);
+            _img = InterView.GetImageOnCurrQuestion();
             _baseControl.Invalidate();
             return question;
         }
@@ -139,7 +141,8 @@ namespace Interview.InterviewWorker
                         }
                     }
                 }
-                MessageBox.Show("Выберите ответ!");
+                return null;
+                //MessageBox.Show("Выберите ответ!");
             }
             catch (Exception exp)
             {
@@ -200,20 +203,14 @@ namespace Interview.InterviewWorker
             }
         }
 
-        private void SetQuestionPicture()
+        private void _baseControl_Paint(object sender, PaintEventArgs e)
         {
-            var img = InterView.GetImageOnCurrQuestion();
-            if (img != null)
+            if (_img != null)
             {
                 var newLocation = new Point(_questionCoords.X + Options.PictureLocation.X,
                     _questionCoords.Y + Options.PictureLocation.Y);
-                _graphics.DrawImage(img, newLocation);
+                _graphics.DrawImage(_img, newLocation);
             }
-        }
-
-        private void _baseControl_Paint(object sender, PaintEventArgs e)
-        {
-            SetQuestionPicture();
         }
 
         private bool CheckForValidRespondentName(string respondentName)

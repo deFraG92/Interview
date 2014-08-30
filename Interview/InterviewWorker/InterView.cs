@@ -21,7 +21,8 @@ namespace Interview.InterviewWorker
         private static int _questionNumber = -1;
         private static bool _haveHistory;
         private static bool _interviewCompleteness;
-
+        private static Dictionary<string, Image> _pictureDict; 
+        
         public static void Start()
         {
             _dataLoader =
@@ -64,7 +65,8 @@ namespace Interview.InterviewWorker
                     _questionNumber++;
                 if (questionMove == QuestionMove.BackWard)
                     _questionNumber--;
-                return (_questions.Length > _questionNumber) & (_questionNumber >= 0) ? _questions[_questionNumber].Name : null;
+                return (_questions.Length > _questionNumber) & (_questionNumber >= 0) ? 
+                    _questionNumber + 1 + ") " + _questions[_questionNumber].Name : null;
             }
             catch (Exception exp)
             {
@@ -88,7 +90,7 @@ namespace Interview.InterviewWorker
         {
             try
             {
-                var answerScore = ((Answer) _questionsList[_questionNumber]).ScoreList[answer];
+                var answerScore = answer != null ? ((Answer) _questionsList[_questionNumber]).ScoreList[answer] : -1;
                 if (!_resultScoreList.ContainsKey(_questions[_questionNumber]))
                 {
                     _resultScoreList.Add(_questions[_questionNumber], answerScore);
@@ -209,8 +211,37 @@ namespace Interview.InterviewWorker
 
         public static Image GetImageOnCurrQuestion()
         {
-            var imgRow = _dataLoader.GetDataTable(GetDataType.QuestionPicture);
-            return imgRow.Rows.Count > 0 ? (Image)imgRow.Rows[0][0] : null;
+            try
+            {
+                if (_pictureDict == null)
+                {
+                    _pictureDict = new Dictionary<string, Image>();
+                }
+                if (_questionNumber < _questions.Length)
+                {
+                    var currQuestion = _questions[_questionNumber].Name;
+                    if (!_pictureDict.ContainsKey(currQuestion))
+                    {
+                        var imgRow = _dataLoader.GetDataTable(GetDataType.QuestionPicture);
+                        if (imgRow.Rows.Count > 0)
+                        {
+                            var img = (Image) imgRow.Rows[0][0];
+                            _pictureDict.Add(currQuestion, img);
+                            return img;
+                        }
+                        _pictureDict.Add(currQuestion, null);
+                    }
+                    else
+                    {
+                        return _pictureDict[currQuestion];
+                    }
+                }
+            }
+            catch (Exception exp)
+            {
+                throw new Exception("GetImageOnCurrQuestion: " + exp);
+            }
+            return null;
         }
 
         // Remove to BaseDataLoader

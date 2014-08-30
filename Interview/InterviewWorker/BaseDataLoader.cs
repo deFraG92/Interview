@@ -444,7 +444,7 @@ namespace Interview.InterviewWorker
                                 " from main.Pictures, " +
                                      " main.Questions, " +
                                      " main.Interview " +
-                                " where Pictures.id = Questions.id " +
+                                " where Pictures.id = Questions.picture_id " +
                                       " and Interview.question_id = Questions.id " +
                                       " and Questions.name = '" + InterView.GetCurrentQuestionAndAnswer().Key.Name + "'" +
                                       " and Interview.theme_id = '" + _interviewThemeId + "'";
