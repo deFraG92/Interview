@@ -179,9 +179,20 @@ namespace Interview.InterviewWorker
             var spaceBetweenQuestionAndAnswers = Options.SpaceBetweenQuestionAndAnswers;
             var spaceBetweenAnswers = Options.SpaceBetweenAnswers;
             var spaceBetweenQuestionAndPicture = Options.PictureLocation;
+            //only vertical dependence
+            spaceBetweenQuestionAndPicture.X = 0;
+            Point pictureSize;
             if (!Options.HavePictures)
             {
                 spaceBetweenQuestionAndPicture = new Point(0, 0);
+            }
+            if (_img != null)
+            {
+                pictureSize = new Point(_img.Width, _img.Height);
+            }
+            else
+            {
+                pictureSize = new Point(0, 0);
             }
             //
             foreach (var element in answerList)
@@ -189,7 +200,8 @@ namespace Interview.InterviewWorker
                 var radionButton = new RadioButton()
                 {
                     Location = new Point(_questionCoords.X + spaceBetweenQuestionAndPicture.X + spaceBetweenQuestionAndAnswers.X,
-                                         _questionCoords.Y + spaceBetweenQuestionAndPicture.Y + spaceBetweenQuestionAndAnswers.Y),
+                                         _questionCoords.Y + spaceBetweenQuestionAndPicture.Y + pictureSize.Y +
+                                          spaceBetweenQuestionAndAnswers.Y),
                     Text = element.ToString(),
                     Size = new Size(200, 25),
                     Font = new Font(FontFamily.GenericSansSerif, 10, FontStyle.Bold),
@@ -205,6 +217,8 @@ namespace Interview.InterviewWorker
             }
         }
 
+        
+
         private void _baseControl_Paint(object sender, PaintEventArgs e)
         {
             if (_img != null)
@@ -213,6 +227,7 @@ namespace Interview.InterviewWorker
                     _questionCoords.Y + Options.PictureLocation.Y);
                 _graphics.DrawImage(_img, newLocation);
             }
+
         }
 
         private bool CheckForValidRespondentName(string respondentName)
