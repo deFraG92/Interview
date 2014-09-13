@@ -6,7 +6,6 @@ using System.Collections.Specialized;
 using System.Data;
 using System.Drawing;
 using System.Linq;
-using System.Runtime.Remoting.Messaging;
 
 namespace Interview.InterviewWorker
 {
@@ -75,8 +74,12 @@ namespace Interview.InterviewWorker
                 {
                     return CheckHavingQuestionInResultsScores();
                 }
-                return (_questions.Length > _questionNumber) & (_questionNumber >= 0) ? 
-                    _questionNumber + 1 + ") " + _questions[_questionNumber].Name : null;
+                if ((_questions.Length > _questionNumber) & (_questionNumber >= 0))
+                    return _questionNumber + 1 + ") " + _questions[_questionNumber].Name;
+                _interviewCompleteness = true;
+                return null;
+                    
+
             }
             catch (Exception exp)
             {
@@ -157,8 +160,9 @@ namespace Interview.InterviewWorker
             return new KeyValuePair<Question, Answer>(_questions[_questionNumber], (Answer)_questionsList[_questionNumber]);
         }
 
-        public static int GetScoreByQuestion(Question question)
+        public static int GetScoreByQuestionName(string questionName)
         {
+            var question = new Question() {Name = questionName};
             if (_resultScoreList.ContainsKey(question))
             {
                 return _resultScoreList[question];
@@ -336,6 +340,7 @@ namespace Interview.InterviewWorker
                 }
             }
             _notAnsweredQuestions = false;
+            _interviewCompleteness = true;
             return null;
         }
         

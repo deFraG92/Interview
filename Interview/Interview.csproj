@@ -60,6 +60,9 @@
     <Compile Include="InterviewWindow.Designer.cs">
       <DependentUpon>InterviewWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="InterviewWorker\Factor.cs" />
+    <Compile Include="InterviewWorker\FactorAnalize.cs" />
+    <Compile Include="InterviewWorker\FactorDataLoader.cs" />
     <Compile Include="InterviewWorker\InterView.cs" />
     <Compile Include="InterviewWorker\DataLoader.cs" />
     <Compile Include="InterviewWorker\BaseDataLoader.cs" />

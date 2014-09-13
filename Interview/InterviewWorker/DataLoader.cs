@@ -30,6 +30,7 @@ namespace Interview.InterviewWorker
 
     public abstract class DataLoader
     {
+        protected DBWorker.IDbConnection DbConnection;
         public abstract DataTable GetDataTable(Enum getDataEnum);
         public abstract void SetDataTable(Enum setDataEnum);
     }

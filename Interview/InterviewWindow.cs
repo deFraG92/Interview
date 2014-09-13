@@ -62,7 +62,7 @@ namespace Interview
                 new List<char>(){'*', '/'},
                 new List<char>(){'+', '-'}
             };
-           var result = GetFinalResultOfPolishRecord("('[10]'+'[A]')*'{3}'");
+           var result = GetFinalResultOfPolishRecord("'1'*('2'+'5')");
        }
 
         private string GetFinalResultOfPolishRecord(string str)

@@ -9,7 +9,6 @@ namespace Interview.InterviewWorker
 {
     public class BaseDataLoader : DataLoader
     {
-        private readonly IDbConnection _dbConnection;
         private readonly bool _isConnected;
         private int _respondentId = 0;
         private int _interviewThemeId;
@@ -18,9 +17,11 @@ namespace Interview.InterviewWorker
         {
             try
             {
-                
-                _dbConnection = SqliteDbConnection.GetSqliteDbWorker();
-                _isConnected = _dbConnection.ConnectToDb(tns);
+                if (DbConnection == null)
+                {
+                    DbConnection = SqliteDbConnection.GetSqliteDbWorker();
+                }
+                _isConnected = DbConnection.IsConnected() || DbConnection.ConnectToDb(tns);
             }
             catch (Exception exp)
             {
@@ -118,7 +119,7 @@ namespace Interview.InterviewWorker
                 query += " order by main.Questions.ID, main.Answers.ID ";
                 try
                 {
-                    var result = _dbConnection.SelectFromDb(query);
+                    var result = DbConnection.SelectFromDb(query);
                     return result;
                 }
                 catch (Exception exp)
@@ -143,7 +144,7 @@ namespace Interview.InterviewWorker
 
             try
             {
-                var result = _dbConnection.SelectFromDb(query);
+                var result = DbConnection.SelectFromDb(query);
                 return result;
             }
             catch (Exception exp)
@@ -177,7 +178,7 @@ namespace Interview.InterviewWorker
                         " values('" + newAnswerResultId + "', '" + _respondentId + "', '" + interviewId + "', '" + _nextInterviewNum + "')";
             try
             {
-                _dbConnection.DmlOperation(query);
+                DbConnection.DmlOperation(query);
             }
             catch (Exception exp)
             {
@@ -198,7 +199,7 @@ namespace Interview.InterviewWorker
                         " and Questions.Name = '" + currQuestion.Name + "'";
             try
             {
-                var answerResultRow = _dbConnection.SelectFromDb(query);
+                var answerResultRow = DbConnection.SelectFromDb(query);
                 if (answerResultRow.Rows[0][0].ToString() != "")
                 {
                     var answerResultId = answerResultRow.Rows[0][0];
@@ -216,7 +217,7 @@ namespace Interview.InterviewWorker
                                     ", interview_number = '" + nextInterviewNum + "'" +
                                     " where id = '" + answerResultId + "'";
                     }
-                    _dbConnection.DmlOperation(query);
+                    DbConnection.DmlOperation(query);
                 }
                 else
                 {
@@ -237,7 +238,7 @@ namespace Interview.InterviewWorker
                         " and main.Respondents.birthday = '" + birthDay + "'";
             try
             {
-                var result = _dbConnection.SelectFromDb(query);
+                var result = DbConnection.SelectFromDb(query);
                 return result;
             }
             catch (Exception exp)
@@ -256,7 +257,7 @@ namespace Interview.InterviewWorker
                 {
                     var query = "insert into main.Respondents(id, FIO, birthday) values( '" + respondentId +
                                 "', '" + InterView.GetRespondentName() + "', '" + InterView.GetBirthDate() + "')";
-                    _dbConnection.DmlOperation(query);
+                    DbConnection.DmlOperation(query);
                     return respondentId;
                 }
             }
@@ -269,7 +270,7 @@ namespace Interview.InterviewWorker
             var query = "select max(id) from " + tableName;
             try
             {
-                var result = _dbConnection.SelectFromDb(query).Rows[0][0];
+                var result = DbConnection.SelectFromDb(query).Rows[0][0];
                 if (result.ToString() != "")
                     return Convert.ToInt16(result) + 1;
                 return 1;
@@ -291,7 +292,7 @@ namespace Interview.InterviewWorker
                                       " and Interview.id = AnswerResults.interview_id ";
             try
             {
-                var maxInterviewNum = _dbConnection.SelectFromDb(query);
+                var maxInterviewNum = DbConnection.SelectFromDb(query);
                 if (maxInterviewNum.Rows[0][0].ToString() != "")
                 {
                     return Convert.ToInt32(maxInterviewNum.Rows[0][0]);
@@ -312,7 +313,7 @@ namespace Interview.InterviewWorker
                           " where Themes.Name = '" + interviewTheme + "'";
             try
             {
-                var themeRow = _dbConnection.SelectFromDb(query);
+                var themeRow = DbConnection.SelectFromDb(query);
                 if (themeRow.Rows.Count > 0)
                 {
                     return Convert.ToInt32(themeRow.Rows[0][0]);
@@ -344,7 +345,7 @@ namespace Interview.InterviewWorker
                             " where Interview.theme_id = '" + _interviewThemeId + "'" +
                             " and AnswerResults.respondent_id = '" + _respondentId + "' " +
                             " and Interview.id = AnswerResults.interview_id ";
-                var check = _dbConnection.SelectFromDb(query);
+                var check = DbConnection.SelectFromDb(query);
                 if (check.Rows.Count == 0)
                 {
                     check.Columns.Add(new DataColumn() {DataType = typeof (int)});
@@ -368,7 +369,7 @@ namespace Interview.InterviewWorker
                         " and AnswerResults.respondent_id = '" + _respondentId + "' " +
                         " and AnswerResults.Interview_number = '" + _nextInterviewNum + "'" +
                         " )";
-                var identityRow = _dbConnection.SelectFromDb(query);
+                var identityRow = DbConnection.SelectFromDb(query);
                 var identity = Convert.ToInt32(identityRow.Rows[0][0]);
                 if (identity == 0)
                 {
@@ -401,7 +402,7 @@ namespace Interview.InterviewWorker
                               " and AnswerResults.interview_number = '" + _nextInterviewNum + "'";
             try
             {
-                var result = _dbConnection.SelectFromDb(query);
+                var result = DbConnection.SelectFromDb(query);
                 return result;
             }
             catch (Exception exp)
@@ -423,7 +424,7 @@ namespace Interview.InterviewWorker
                                " and AnswerResults.interview_number = '" + _nextInterviewNum + "'";
             try
             {
-                var result = _dbConnection.SelectFromDb(query);
+                var result = DbConnection.SelectFromDb(query);
                 return result;
             }
             catch (Exception exp)
@@ -436,7 +437,7 @@ namespace Interview.InterviewWorker
         {
             try
             {
-                var isConnect = DbImageLoader.ConnectToDb(_dbConnection);
+                var isConnect = DbImageLoader.ConnectToDb(DbConnection);
                 var dataTable = new DataTable();
                 if (isConnect)
                 {
