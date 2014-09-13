@@ -15,12 +15,14 @@ namespace Interview.InterviewWorker
     {
         Factors
     }
-    
-    class FactorDataLoader : DataLoader
+
+    internal class FactorDataLoader : DataLoader
     {
         private readonly bool _isConnected;
+        private readonly string[] _factorValueFields = { "QuestionName", "Factor_id", "Digit", "OperationName" };
         private int _themeId;
         private int _respondentId;
+
         public FactorDataLoader(string tns)
         {
             try
@@ -146,17 +148,17 @@ namespace Interview.InterviewWorker
         {
             foreach (var factorId in factorIdCollection)
             {
-                GetFactorScoreByFactorId(factorId);
+                var factorDataRow = GetFactorScoreByFactorId(factorId);
             }
         }
 
-        private void GetFactorScoreByFactorId(int factorId)
+        private DataTable GetFactorScoreByFactorId(int factorId)
         {
             var query = "select Factors.name FactorName, " +
-                                "Questions.name QuestionName, " +
-                                "FactorsValue.factor_dependence_id factor_id, " +
-                                "FactorsValue.digit, " +
-                                "Operations.name OperationName " +
+                                "Questions.name "+ _factorValueFields[0] +", " +
+                                "FactorsValue.factor_dependence_id "+ _factorValueFields[1] +", " +
+                                "FactorsValue.digit "+ _factorValueFields[2] +", " +
+                                "Operations.name "+ _factorValueFields[3] +
                         "from main.FactorsValue, " +
                              "main.Factors " +
                         "left join main.Operations on Operations.id = FactorsValue.operation_id " +
@@ -166,20 +168,17 @@ namespace Interview.InterviewWorker
             try
             {
                 var factorDataRow = DbConnection.SelectFromDb(query);
-                var modifiedDataRow = TryGetScoreOfQuestionAndFactors(factorDataRow);
+                var modifiedQuestionRow = TryGetScoreOfQuestion(factorDataRow, _factorValueFields[0]);
+                var modifiedFactorsRow = TryGetScoreOfFactors(modifiedQuestionRow, _factorValueFields[1]);
+                
+
 
            }
             catch (Exception exp)
             {
                 throw new Exception("GetFactorScoreByFactorId: " + exp);
             }
-        }
-
-        private DataTable TryGetScoreOfQuestionAndFactors(DataTable table)
-        {
-            var modifiedQuestionRow = TryGetScoreOfQuestion(table, "QuestionName");
-            var modifiedFactorsRow = TryGetScoreOfFactors(modifiedQuestionRow, "factor_id");
-            return modifiedFactorsRow;
+            return null;
         }
 
         private DataTable TryGetScoreOfQuestion(DataTable table, string questionRowName)
@@ -219,6 +218,12 @@ namespace Interview.InterviewWorker
             }
             throw new Exception("TryGetScoreOfFactors: Can't find need row!");
         }
+
+        private void GetParseStringFromDataTable(DataTable table, string[] needFactorFields)
+        {
+                   
+        }
+
 
         private void RespondentAndThemeIdInit()
         {

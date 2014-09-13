@@ -28,7 +28,7 @@ namespace Interview.InterviewWorker
 
         private static void SetFactorResultList()
         {
-            var factorDataTable = _dataLoader.GetDataTable(GetFactorData.Factors);
+            var factorDataTable = _dataLoader.GetDataTable(SetFactorData.Factors);
         }
 
 
