@@ -5,12 +5,13 @@ using System.ComponentModel;
 using System.Data;
 using System.Linq;
 using System.Reflection.Emit;
+using System.Runtime.InteropServices;
 using System.Text;
 using Interview.DBWorker;
 
 namespace Interview.InterviewWorker
 {
-    public enum GetFactorData
+    public enum SetFactorData
     {
         Factors
     }
@@ -29,38 +30,35 @@ namespace Interview.InterviewWorker
                     DbConnection = SqliteDbConnection.GetSqliteDbWorker();
                 }
                 _isConnected = DbConnection.IsConnected() || DbConnection.ConnectToDb(tns);
+                RespondentAndThemeIdInit();
             }
             catch (Exception exp)
             {
                 throw new Exception(exp.ToString());
             }
         }
-        
+
         public override DataTable GetDataTable(Enum getDataEnum)
         {
-            var getData = (GetFactorData) getDataEnum;
-            if (_isConnected)
-            {
-                 _respondentId = GetCurrRespondentId();
-                 _themeId = GetCurrThemeId();
-                 if ((_respondentId > 0) & (_themeId > 0))
-                 {
-                     if (getData == GetFactorData.Factors)
-                     {
-                         return GetFactorsNameAndScore();
-                     }
-                 }
-            }
-            return null;
+            throw new NotImplementedException();
         }
         
         public override void SetDataTable(Enum setDataEnum)
         {
-            throw new NotImplementedException();
-            
+            if (_isConnected)
+            {
+                var setData = (SetFactorData)setDataEnum;
+                if ((_respondentId > 0) & (_themeId > 0))
+                {
+                    if (setData == SetFactorData.Factors)
+                    {
+                        SetFactorsNameAndScore();
+                    }
+                }
+            }
         }
 
-        private DataTable GetFactorsNameAndScore()
+        private void SetFactorsNameAndScore()
         {
             if (InterView.GetInterviewCompleteness())
             {
@@ -144,13 +142,15 @@ namespace Interview.InterviewWorker
             return factorCollectionId;
         }
 
-
-        private DataTable GetFactorScore(IEnumerable<int> factorIdCollection)
+        private void SetFactorScore(IEnumerable<int> factorIdCollection)
         {
-            
+            foreach (var factorId in factorIdCollection)
+            {
+                GetFactorScoreByFactorId(factorId);
+            }
         }
 
-        private int GetFactorScoreByFactorId(int factorId)
+        private void GetFactorScoreByFactorId(int factorId)
         {
             var query = "select Factors.name FactorName, " +
                                 "Questions.name QuestionName, " +
@@ -167,19 +167,19 @@ namespace Interview.InterviewWorker
             {
                 var factorDataRow = DbConnection.SelectFromDb(query);
                 var modifiedDataRow = TryGetScoreOfQuestionAndFactors(factorDataRow);
-            }
+
+           }
             catch (Exception exp)
             {
                 throw new Exception("GetFactorScoreByFactorId: " + exp);
             }
-
         }
 
         private DataTable TryGetScoreOfQuestionAndFactors(DataTable table)
         {
             var modifiedQuestionRow = TryGetScoreOfQuestion(table, "QuestionName");
             var modifiedFactorsRow = TryGetScoreOfFactors(modifiedQuestionRow, "factor_id");
-
+            return modifiedFactorsRow;
         }
 
         private DataTable TryGetScoreOfQuestion(DataTable table, string questionRowName)
@@ -190,24 +190,58 @@ namespace Interview.InterviewWorker
                 for (int i = 0; i < table.Rows.Count; i ++)
                 {
                     var questionName = table.Rows[i][questionRowName];
-                    modifiedQuestionDataTable.Rows[i][questionRowName] =
-                        InterView.GetScoreByQuestionName(questionName.ToString());
+                    if (questionName != null)
+                    {
+                        modifiedQuestionDataTable.Rows[i][questionRowName] =
+                           InterView.GetScoreByQuestionName(questionName.ToString());
+                    }
                 }
                 return modifiedQuestionDataTable;
             }
             throw new Exception("TryGetScoreOfQuestion: Can't find need row!");
         }
 
-        private DataRow TryGetScoreOfFactors(DataTable table, string factorRowName)
+        private DataTable TryGetScoreOfFactors(DataTable table, string factorRowName)
         {
             if (table.Columns.Contains(factorRowName))
             {
-                var modifiedFactorData = table;
-                
+                var modifiedFactorDataTable = table;
+                for (int i = 0; i < table.Rows.Count; i ++)
+                {
+                    var factorId = table.Rows[i][factorRowName];
+                    if (factorId != null)
+                    {
+                        var factorName = GetFactorNameById((int)factorId);
+                        modifiedFactorDataTable.Rows[i][factorRowName] =
+                            FactorAnalize.GetFactorScoreByFactorName(factorName);
+                    }
+                }
             }
             throw new Exception("TryGetScoreOfFactors: Can't find need row!");
         }
 
+        private void RespondentAndThemeIdInit()
+        {
+            _respondentId = GetCurrRespondentId();
+            _themeId = GetCurrThemeId();
+        }
+        
+        private string GetFactorNameById(int factorId)
+        {
+            var query = "select " +
+                        "from main.Factors " +
+                        "where Factors.id = " + factorId;
+            try
+            {
+                var factorIdRow = DbConnection.SelectFromDb(query);
+                return factorIdRow.Rows.Count > 0 ? factorIdRow.Rows[0][0].ToString() : null;
+            }
+            catch (Exception exp)
+            {
+                throw new Exception("GetFactorNameById: " + exp);
+            }
+        }
+        
         private int GetCurrRespondentId()
         {
             var query = " select Respondents.id " +
@@ -257,5 +291,7 @@ namespace Interview.InterviewWorker
             }
             return resultCollection;
         }
+
+        
     }
 }

@@ -16,14 +16,19 @@ namespace Interview.InterviewWorker
             _dataLoader = new FactorDataLoader(tns);
         }
 
-        public static GetFactorScoreByFactorName(string factorName)
+        public static int GetFactorScoreByFactorName(string factorName)
         {
-            var factor = new Factor() {Name = factorName};
+            var factor = new Factor {Name = factorName};
+            if (_factorScoreList.ContainsKey(factor))
+            {
+                return _factorScoreList[factor];
+            }
+            return -1;
         }
 
         private static void SetFactorResultList()
         {
-            _dataLoader.GetDataTable(GetFactorData.Factors);
+            var factorDataTable = _dataLoader.GetDataTable(GetFactorData.Factors);
         }
 
 
