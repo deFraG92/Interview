@@ -158,6 +158,7 @@ namespace Interview.InterviewWorker
                 var modifiedFactorsRow = _factorDependence ? TryGetScoreOfFactors(modifiedQuestionRow, _factorValueFields[1])
                     : modifiedQuestionRow;
                 var factorScoreInString = GetParseStringFromDataTableAndGetResult(modifiedFactorsRow, needFactorsFields, _factorValueFields[3]);
+                InsertFactorsResultIntoDbAndFactorScoreList(factorId, factorScoreInString);
             }
         }
 
