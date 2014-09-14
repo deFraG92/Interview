@@ -161,9 +161,7 @@ namespace Interview.InterviewWorker
                 InsertFactorsResultIntoDbAndFactorScoreList(factorId, factorScoreInString);
             }
         }
-
-
-
+        
         private DataTable GetFactorDataByFactorId(int factorId)
         {
             var query = "select Questions.name "+ _factorValueFields[0] +", " +
