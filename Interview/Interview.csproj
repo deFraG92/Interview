@@ -53,6 +53,7 @@
   <ItemGroup>
     <Compile Include="DBWorker\IDbConnection.cs" />
     <Compile Include="DBWorker\SqliteDbConnection.cs" />
+    <Compile Include="DBWorker\StringParser.cs" />
     <Compile Include="InterviewWorker\Answer.cs" />
     <Compile Include="InterviewWindow.cs">
       <SubType>Form</SubType>

@@ -14,6 +14,8 @@ namespace Interview.InterviewWorker
         public static void FactorAnalizeInit(string tns)
         {
             _dataLoader = new FactorDataLoader(tns);
+            _factorScoreList = new Dictionary<Factor, int>();
+            SetFactorResultList();
         }
 
         public static int GetFactorScoreByFactorName(string factorName)
@@ -26,9 +28,14 @@ namespace Interview.InterviewWorker
             return -1;
         }
 
+        public static void SetFactorAndFactorScore(Factor factor, int score)
+        {
+            _factorScoreList.Add(factor, score);
+        }
+
         private static void SetFactorResultList()
         {
-            var factorDataTable = _dataLoader.GetDataTable(SetFactorData.Factors);
+            _dataLoader.SetDataTable(SetFactorData.Factors);
         }
 
 

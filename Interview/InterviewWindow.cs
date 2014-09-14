@@ -20,6 +20,7 @@ namespace Interview
             Question_Lbl.Location = Options.QuestionLocation;
             Prev_But.Visible = Options.HaveBackward;
             GetQuestionAndAnswers(QuestionMove.Forward);
+            
             //ParseInit();
         }
 
@@ -41,7 +42,10 @@ namespace Interview
         {
             var question = _questionMaker.GetQuestion(questionMove);
             if (question == null)
+            {
+                FactorAnalize.FactorAnalizeInit("");
                 Close();
+            }
             else
             {
                 Question_Lbl.Text = question.ToString();

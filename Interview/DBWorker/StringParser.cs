@@ -141,15 +141,12 @@ namespace Interview.DBWorker
                     {
                         case '+':
                             return doubleA + doubleB;
-
                         case '-':
                             return doubleB - doubleA;
-
                         case '*':
-                            return doubleA * doubleB;
-
+                            return doubleA*doubleB;
                         case '/':
-                            return doubleA != 0 ? doubleB / doubleA : 0;
+                            return doubleA != 0 ? doubleB/doubleA : 0;
 
                         case '^':
                             return Math.Pow(doubleB, doubleA);

@@ -156,7 +156,7 @@ namespace Interview.InterviewWorker
         private void InsertAnswerResult(SetDataType dataType)
         {
             var currQuestion = InterView.GetCurrentQuestionAndAnswer().Key;
-            var interviewIdRow = GetInteviewId(currQuestion, InterView.GetScoreByQuestion(currQuestion));
+            var interviewIdRow = GetInteviewId(currQuestion, InterView.GetScoreByQuestionName(currQuestion.Name));
             if (interviewIdRow.Rows.Count > 0)
             {
                 var interviewId = interviewIdRow.Rows[0][0];
