@@ -1,8 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Windows.Forms;
+
 
 namespace Interview.InterviewWorker
 {
@@ -33,7 +31,7 @@ namespace Interview.InterviewWorker
             _factorScoreList.Add(factor, score);
         }
 
-        private static void SetFactorResultList()
+        public static void SetFactorResultList()
         {
             _dataLoader.SetDataTable(SetFactorData.Factors);
         }

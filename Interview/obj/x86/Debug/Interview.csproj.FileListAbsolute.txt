@@ -27,3 +27,19 @@ E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\obj\x86\Debug\Interview.R
 E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\obj\x86\Debug\Interview.csproj.GenerateResource.Cache
 E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\bin\Debug\Interview.exe.config
 E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\obj\x86\Debug\Interview.StartInterviewWindow.resources
+E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\obj\x86\Debug\Interview.TestForm.resources
+E:\Projects\C#\Interview\Interview\bin\Debug\Interview.exe.config
+E:\Projects\C#\Interview\Interview\obj\x86\Debug\Interview.exe
+E:\Projects\C#\Interview\Interview\obj\x86\Debug\Interview.pdb
+E:\Projects\C#\Interview\Interview\obj\x86\Debug\Interview.csprojResolveAssemblyReference.cache
+E:\Projects\C#\Interview\Interview\obj\x86\Debug\Interview.InterviewWindow.resources
+E:\Projects\C#\Interview\Interview\obj\x86\Debug\Interview.Properties.Resources.resources
+E:\Projects\C#\Interview\Interview\obj\x86\Debug\Interview.RespondentWindow.resources
+E:\Projects\C#\Interview\Interview\obj\x86\Debug\Interview.StartInterviewWindow.resources
+E:\Projects\C#\Interview\Interview\obj\x86\Debug\Interview.TestForm.resources
+E:\Projects\C#\Interview\Interview\obj\x86\Debug\Interview.csproj.GenerateResource.Cache
+E:\Projects\C#\Interview\Interview\bin\Debug\Interview.exe
+E:\Projects\C#\Interview\Interview\bin\Debug\Interview.pdb
+E:\Projects\C#\Interview\Interview\bin\Debug\MyControl.dll
+E:\Projects\C#\Interview\Interview\bin\Debug\system.data.sqlite.dll
+E:\Projects\C#\Interview\Interview\bin\Debug\MyControl.pdb

@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Data;
+using System.Data.SQLite;
 using System.Linq;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
@@ -20,7 +21,7 @@ namespace Interview.InterviewWorker
     internal class FactorDataLoader : DataLoader
     {
         private readonly bool _isConnected;
-        private readonly string[] _factorValueFields = { "FactorName", "QuestionName", "Factor_id", "Digit", "OperationName" };
+        private readonly string[] _factorValueFields = { "QuestionName", "Factor_id", "Digit", "OperationName" };
         private int _themeId;
         private int _respondentId;
         private bool _factorDependence;
@@ -92,6 +93,26 @@ namespace Interview.InterviewWorker
             }
 
         }
+
+        private bool CheckForFactorDependence(int factorId)
+        {
+            var query = " select count(distinct FactorsValue.factor_dependence_id) " +
+                        " from main.FactorsValue," +
+                             " main.Factors" +
+                        " where FactorsValue.factor_id = Factors.id " +
+                              " and FactorsValue.factor_id = " + factorId + 
+                              " and Factors.theme_id = " + _themeId;
+            try
+            {
+                var dependRow = DbConnection.SelectFromDb(query);
+                return Convert.ToInt32(dependRow.Rows[0][0]) > 0;
+            }
+            catch (Exception exp)
+            {
+                throw new Exception(exp.ToString());
+            }
+
+        }
         
         private IEnumerable<int> GetFactorsIdWithoutFactorDependence()
         {
@@ -99,7 +120,11 @@ namespace Interview.InterviewWorker
                         " from main.Factors, " +
                              " main.FactorsValue " +
                         " where Factors.theme_id = " + _themeId + 
-                                " and Factors.id = FactorsValue.factor_id";
+                                " and Factors.id = FactorsValue.factor_id" +
+                                " and FactorsValue.factor_id not in " +
+                                " ( select FactorsValue.factor_id " +
+                                " from main.FactorsValue " +
+                                " where FactorsValue.factor_dependence_id is not null ) " ;
             try
             {
                 var factorIdRow = DbConnection.SelectFromDb(query);
@@ -111,16 +136,15 @@ namespace Interview.InterviewWorker
             }
         }
 
-        private IEnumerable<int> FindFactorChildsAndGetCollection(int factorId)
+        private IEnumerable<int> GetFactorsAndDependencesId()
         {
-            var query = "with recursive Childs(id) as " +
-                        "( " +
-                        "values(" + factorId + ") " +
-                        "union all " +
-                        "select FactorsValue.factor_id " +
-                        "from main.FactorsValue join Childs on Childs.id = FactorsValue.factor_dependence_id " +
-                        ") " +
-                        "select distinct Childs.id from Childs";
+            var query = " select distinct FactorsValue.factor_id, FactorsValue.factor_dependence_id " +
+                        " from main.Factors, " +
+                             " main.FactorsValue " +
+                        " where Factors.theme_id = " + _themeId +
+                                " and Factors.id = FactorsValue.factor_id" +
+                                " and FactorsValue.factor_dependence_id is not null"; ;
+
             try
             {
                 var factorChildRow = DbConnection.SelectFromDb(query);
@@ -131,32 +155,67 @@ namespace Interview.InterviewWorker
                 throw new Exception("FindFactorChildAndSetItIntoFactorCollection: " + exp);
             }
         }
-        
-        private IEnumerable<int> GetFactorsIdWithFactorDependence()
+
+        private IEnumerable<int> GetOrderFactorList(int[] factorAndFactorDependencesCollection)
         {
-            var factorsIdWithoutDependence = GetFactorsIdWithoutFactorDependence();
-            var factorCollectionId = new List<int>(factorsIdWithoutDependence);
-            foreach (var factorId in factorsIdWithoutDependence)
+            var flag = true;
+            var counter = 0;
+            const int colSize = 2;
+            var rowSize = factorAndFactorDependencesCollection.Count() / colSize;
+            var orderList = (List<int>)GetFactorsIdWithoutFactorDependence();
+            while (flag)
             {
-                var factorChildsCollection = FindFactorChildsAndGetCollection(factorId);
-                foreach (var elem in factorChildsCollection.Where(x => !factorCollectionId.Contains(x)))
+                for (int i = 0; i < rowSize; i++)
                 {
-                    factorCollectionId.Add(elem);
+                    var dependElem = factorAndFactorDependencesCollection[i * colSize + 1];
+                    var baseElem = factorAndFactorDependencesCollection[i * colSize];
+                    if (dependElem != -1)
+                    {
+                        if (orderList.Contains(dependElem))
+                        {
+                            if (!orderList.Contains(baseElem))
+                            {
+                                counter++;
+                                orderList.Add(baseElem);
+                            }
+                            factorAndFactorDependencesCollection[i * colSize + 1] = -1;
+                        }
+                    }
+                }
+                if (counter == 0)
+                {
+                    flag = false;
+                }
+                else
+                {
+                    counter = 0;
                 }
             }
-            return factorCollectionId;
+            return orderList;
+        }
+
+        private IEnumerable<int> GetFactorsIdWithFactorDependence()
+        {
+            var factorCollectionId = GetFactorsAndDependencesId();
+            var orderFactorIdList = GetOrderFactorList(factorCollectionId.ToArray());
+            return orderFactorIdList;
         }
         
         private void SetFactorScore(IEnumerable<int> factorIdCollection)
         {
             foreach (var factorId in factorIdCollection)
             {
+                // Вытягиваем имя вопроса, ид фактора, число, имя операции
                 var factorDataRow = GetFactorDataByFactorId(factorId);
                 var modifiedQuestionRow = TryGetScoreOfQuestion(factorDataRow, _factorValueFields[0]);
+                // устанавливаем набор требуемых полей
                 var needFactorsFields = !_factorDependence ? new[] {_factorValueFields[0], _factorValueFields[2]} :
                     new[] {_factorValueFields[0], _factorValueFields[1], _factorValueFields[2]};
-                var modifiedFactorsRow = _factorDependence ? TryGetScoreOfFactors(modifiedQuestionRow, _factorValueFields[1])
+                // Проверяем зависимость от факторов
+                var haveFactorDependence = CheckForFactorDependence(factorId);
+                var modifiedFactorsRow = haveFactorDependence ? TryGetScoreOfFactors(modifiedQuestionRow, _factorValueFields[1])
                     : modifiedQuestionRow;
+                // Используя парсер, вычисляем значение фактора
                 var factorScoreInString = GetParseStringFromDataTableAndGetResult(modifiedFactorsRow, needFactorsFields, _factorValueFields[3]);
                 InsertFactorsResultIntoDbAndFactorScoreList(factorId, factorScoreInString);
             }
@@ -177,6 +236,7 @@ namespace Interview.InterviewWorker
                 var factorDataRow = DbConnection.SelectFromDb(query);
                 return factorDataRow.Rows.Count > 0 ? factorDataRow : null;
             }
+ 
             catch (Exception exp)
             {
                 throw new Exception("GetFactorDataByFactorId: " + exp);
@@ -195,7 +255,6 @@ namespace Interview.InterviewWorker
                     {
                         modifiedQuestionDataTable.Rows[i][questionRowName] =
                            InterView.GetScoreByQuestionName(questionName.ToString());
-                        MessageBox.Show(modifiedQuestionDataTable.Rows[i][questionRowName].ToString());
                     }
                 }
                 return modifiedQuestionDataTable;
@@ -211,14 +270,15 @@ namespace Interview.InterviewWorker
                 for (int i = 0; i < table.Rows.Count; i ++)
                 {
                     var factorId = table.Rows[i][factorRowName];
-                    if (factorId != null)
+                    if (factorId.ToString() != "")
                     {
-                        var factorName = GetFactorNameById((int)factorId);
+                        var factorName = GetFactorNameById(Convert.ToInt32(factorId));
                         modifiedFactorDataTable.Rows[i][factorRowName] =
                             FactorAnalize.GetFactorScoreByFactorName(factorName);
                         
                     }
                 }
+                return modifiedFactorDataTable;
             }
             throw new Exception("TryGetScoreOfFactors: Can't find need row!");
         }
@@ -258,8 +318,11 @@ namespace Interview.InterviewWorker
                 {
                     var factorName = GetFactorNameById(factorId);
                     FactorAnalize.SetFactorAndFactorScore(new Factor {Name = factorName}, factorScore);
-                    var query = "insert into ";
-                    DbConnection.DmlOperation("");
+                    var newFactorResultsId = GetNewTableIndexId("FactorResults");
+                    var query = "insert into main.FactorResults(id, respondent_id, factor_id, score) " +
+                                "values(" + newFactorResultsId + ", " + _respondentId + ", " + factorId + ", " +
+                                factorScore + ")";
+                    DbConnection.DmlOperation(query);
                 }
                 catch (Exception exp)
                 {
@@ -276,13 +339,13 @@ namespace Interview.InterviewWorker
         
         private string GetFactorNameById(int factorId)
         {
-            var query = "select " +
-                        "from main.Factors " +
-                        "where Factors.id = " + factorId;
+            var query = "select Factors.name" +
+                        " from main.Factors " +
+                        " where Factors.id = " + factorId;
             try
             {
-                var factorIdRow = DbConnection.SelectFromDb(query);
-                return factorIdRow.Rows.Count > 0 ? factorIdRow.Rows[0][0].ToString() : null;
+                var factorName = DbConnection.SelectScalarFromDb(query);
+                return factorName.ToString();
             }
             catch (Exception exp)
             {
@@ -298,12 +361,8 @@ namespace Interview.InterviewWorker
                                "and Respondents.birthday = '" + InterView.GetBirthDate() + "'";
             try
             {
-                var respondentRow = DbConnection.SelectFromDb(query);
-                if (respondentRow.Rows.Count > 0)
-                {
-                    return (Int32) respondentRow.Rows[0][0];
-                }
-                return -1;
+                var respondentId = DbConnection.SelectScalarFromDb(query);
+                return Convert.ToInt32(respondentId);
             }
             catch (Exception exp)
             {
@@ -318,12 +377,8 @@ namespace Interview.InterviewWorker
                         " where Themes.name = '" + InterView.GetInterviewTheme() + "'";
             try
             {
-                var themeRow = DbConnection.SelectFromDb(query);
-                if (themeRow.Rows.Count > 0)
-                {
-                    return Convert.ToInt32(themeRow.Rows[0][0]);
-                }
-                return -1;
+                var themeId = DbConnection.SelectScalarFromDb(query);
+                return Convert.ToInt32(themeId);
             }
             catch (Exception exp)
             {
@@ -338,12 +393,28 @@ namespace Interview.InterviewWorker
             {
                 for (int i = 0; i < table.Rows.Count; i++)
                 {
-                    resultCollection.Add(Convert.ToInt32(table.Rows[i][0]));
+                    for (int j = 0; j < table.Columns.Count; j++)
+                        resultCollection.Add(Convert.ToInt32(table.Rows[i][j]));
                 }
             }
             return resultCollection;
         }
 
-        
+        private int GetNewTableIndexId(string tableName)
+        {
+            var query = "select max(id) from " + tableName;
+            try
+            {
+                var result = DbConnection.SelectScalarFromDb(query);
+                if (result.ToString() != "")
+                    return Convert.ToInt32(result) + 1;
+                return 1;
+            }
+            catch (Exception exp)
+            {
+                throw new Exception("GetNewTableIndexId " + exp);
+            }
+
+        }
     }
 }

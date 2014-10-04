@@ -27,7 +27,7 @@ namespace Interview.InterviewWorker
         public static void Start()
         {
             _dataLoader =
-                new BaseDataLoader(@"E:\Projects\C#(Windows Forms)\Interview(GIT)\Interview\Interview");
+                new BaseDataLoader(@"E:\Projects\C#\Interview\Interview\Interview");
         }
 
         public static void SetInterviewCompleteness()

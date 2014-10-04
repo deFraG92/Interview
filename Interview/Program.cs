@@ -20,6 +20,8 @@ namespace Interview
             Application.Run(new RespondentWindow(questionMaker));
             Application.Run(new StartInterviewWindow(questionMaker));
             Application.Run(new InterviewWindow(questionMaker));
+            //Application.Run(new TestForm());
+
         }
     }
 }

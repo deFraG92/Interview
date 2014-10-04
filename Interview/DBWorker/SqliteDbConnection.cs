@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Data.Common;
 using System.Data.SQLite;
+using System.Data.SqlTypes;
 using System.Linq;
 using System.Text;
 using System.Windows.Forms;
@@ -18,7 +19,7 @@ namespace Interview.DBWorker
         
         private SqliteDbConnection()
         {
-
+            
         }
 
         public static SqliteDbConnection GetSqliteDbWorker()
@@ -55,15 +56,10 @@ namespace Interview.DBWorker
         {
             if (_isConnected)
             {
-                try
+                using (var command = new SQLiteCommand(query, _sqLiteConnection))
                 {
-                    var command = new SQLiteCommand(query, _sqLiteConnection);
                     command.ExecuteNonQuery();
                     return true;
-                }
-                catch (Exception exp)
-                {
-                    throw new Exception(exp.ToString());
                 }
             }
             return false;
@@ -73,20 +69,24 @@ namespace Interview.DBWorker
         {
             if (_isConnected)
             {
-                try
+                using (var command = new SQLiteCommand(query, _sqLiteConnection))
                 {
-                    var command = new SQLiteCommand(query, _sqLiteConnection);
                     var reader = command.ExecuteReader();
                     var dataTable = new DataTable();
                     dataTable.Load(reader);
                     return dataTable;
                 }
-                catch (Exception exp)
-                {
-                    throw new Exception(exp.ToString());
-                }
             }
             return null;
+        }
+
+        public object SelectScalarFromDb(string query)
+        {
+            using (var command = new SQLiteCommand(query, _sqLiteConnection))
+            {
+                var result = command.ExecuteScalar();
+                return result;
+            }
         }
 
         public bool DisconnectFromDb()

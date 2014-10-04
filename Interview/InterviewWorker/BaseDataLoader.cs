@@ -262,7 +262,6 @@ namespace Interview.InterviewWorker
                 }
             }
             return Convert.ToInt16(respondentIdRow.Rows[0][0]);
-
         }
 
         private int GetNewTableIndexId(string tableName)
