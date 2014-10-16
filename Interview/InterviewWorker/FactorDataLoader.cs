@@ -322,31 +322,30 @@ namespace Interview.InterviewWorker
                         if (_maxInterviewNum > 0)
                         {
                             var query = "select FactorResults.id " +
-                                        "from main.FactorResults " +
+                                        "from main.FactorResults," +
+                                        "main.Factors " +
                                         "where FactorResults.interview_number = " + _maxInterviewNum +
                                         " and FactorResults.respondent_id = " + _respondentId +
-                                        " and FactorResults.theme_id = " + _themeId +
-                                        " and FactorResults.factor_id = " + factorId;
+                                        " and Factors.theme_id = " + _themeId +
+                                        " and FactorResults.factor_id = " + factorId +
+                                        " and FactorResults.factor_id = Factors.id";
                             var factorResultId = DbConnection.SelectScalarFromDb(query);
                             if (factorResultId.ToString() == "")
                             {
                                 throw new Exception("Factor was not found!");
                             }
                             query = "update main.FactorResults " +
-                                    "set FactorResults.answer_date = current_date " +
-                                    ", FactorResults.score = " + factorScore +
-                                    ", FactorResults.interview_number = " + (_maxInterviewNum + 1) +
+                                    "set answer_date = current_date " +
+                                    ", score = " + factorScore +
+                                    ", interview_number = " + (_maxInterviewNum + 1) +
                                     " where FactorResults.id = " + Convert.ToInt32(factorResultId);
                             DbConnection.DmlOperation(query);
                         }
                         else
                         {
                             InsertFactorInDb(factorId, factorScore);
-                            return;
                         }
-                        
                     }
-                    
                 }
                 catch (Exception exp)
                 {
@@ -462,9 +461,11 @@ namespace Interview.InterviewWorker
         private int GetMaxInterviewNum()
         {
             var query = "select max(FactorResults.interview_number)" +
-                        "from main.FactorResults " +
+                        "from main.FactorResults," +
+                             "main.Factors " +
                         "where FactorResults.respondent_id = " + _respondentId +
-                        " and FactorResults.theme_id = " + _themeId;
+                        " and Factors.theme_id = " + _themeId + 
+                        " and Factors.id = FactorResults.factor_id";
             try
             {
                 var maxInterviewNum = DbConnection.SelectScalarFromDb(query);
