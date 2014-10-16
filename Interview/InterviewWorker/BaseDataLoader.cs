@@ -174,8 +174,9 @@ namespace Interview.InterviewWorker
         private void AddAnswerResult(object interviewId)
         {
             var newAnswerResultId = GetNewTableIndexId("main.AnswerResults");
-            var query = "insert into main.AnswerResults(id, respondent_id, interview_id, interview_number)" +
-                        " values('" + newAnswerResultId + "', '" + _respondentId + "', '" + interviewId + "', '" + _nextInterviewNum + "')";
+            var query = "insert into main.AnswerResults(id, respondent_id, interview_id, interview_number, answer_date)" +
+                        " values('" + newAnswerResultId + "', '" + _respondentId + "', '" + interviewId + "', '" + _nextInterviewNum + "'" +
+                        ", current_date)";
             try
             {
                 DbConnection.DmlOperation(query);
@@ -207,6 +208,7 @@ namespace Interview.InterviewWorker
                     {
                         query = " update main.AnswerResults" +
                                 " set Interview_id = '" + interviewId + "'" +
+                                     ", answer_date = current_date " +
                                 " where id = '" + answerResultId + "'";
                     }
                     else
@@ -215,6 +217,7 @@ namespace Interview.InterviewWorker
                             query = " update main.AnswerResults" +
                                     " set Interview_id = '" + interviewId + "'" +
                                     ", interview_number = '" + nextInterviewNum + "'" +
+                                        ", answer_date = current_date " +
                                     " where id = '" + answerResultId + "'";
                     }
                     DbConnection.DmlOperation(query);
@@ -269,7 +272,7 @@ namespace Interview.InterviewWorker
             var query = "select max(id) from " + tableName;
             try
             {
-                var result = DbConnection.SelectFromDb(query).Rows[0][0];
+                var result = DbConnection.SelectScalarFromDb(query);
                 if (result.ToString() != "")
                     return Convert.ToInt16(result) + 1;
                 return 1;
@@ -291,10 +294,10 @@ namespace Interview.InterviewWorker
                                       " and Interview.id = AnswerResults.interview_id ";
             try
             {
-                var maxInterviewNum = DbConnection.SelectFromDb(query);
-                if (maxInterviewNum.Rows[0][0].ToString() != "")
+                var maxInterviewNum = DbConnection.SelectScalarFromDb(query);
+                if (maxInterviewNum.ToString() != "")
                 {
-                    return Convert.ToInt32(maxInterviewNum.Rows[0][0]);
+                    return Convert.ToInt32(maxInterviewNum);
                 }
                 
             }
@@ -312,10 +315,10 @@ namespace Interview.InterviewWorker
                           " where Themes.Name = '" + interviewTheme + "'";
             try
             {
-                var themeRow = DbConnection.SelectFromDb(query);
-                if (themeRow.Rows.Count > 0)
+                var themeRow = DbConnection.SelectScalarFromDb(query);
+                if (themeRow.ToString() != "")
                 {
-                    return Convert.ToInt32(themeRow.Rows[0][0]);
+                    return Convert.ToInt32(themeRow);
                 }
                 return 0;
             }

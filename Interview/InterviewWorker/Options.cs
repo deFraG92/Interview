@@ -1,5 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
 using System.Drawing;
 
 
@@ -12,7 +11,8 @@ namespace Interview.InterviewWorker
         SpaceBetweenAnswers,
         SpaceBetweenQuestionAndPicture,
         HaveBackWard,
-        HaveHistory,
+        HaveQuestionsHistory,
+        HaveFactorsHistory,
         HavePicture,
         PictureLocation,
         PictureSize,
@@ -40,8 +40,8 @@ namespace Interview.InterviewWorker
                 SpaceBetweenQuestionAndAnswers = new Point(Convert.ToInt32(data[0][0]), Convert.ToInt32(data[1][0]));
                 data = _dataLoader.GetDataTable(OptionName.HaveBackWard).Rows;
                 HaveBackward = Convert.ToBoolean(data[0][0]);
-                data = _dataLoader.GetDataTable(OptionName.HaveHistory).Rows;
-                HaveHistory = Convert.ToBoolean(data[0][0]);
+                data = _dataLoader.GetDataTable(OptionName.HaveQuestionsHistory).Rows;
+                HaveQuestionsHistory = Convert.ToBoolean(data[0][0]);
                 data = _dataLoader.GetDataTable(OptionName.HavePicture).Rows;
                 HavePictures = Convert.ToBoolean(data[0][0]);
                 data = _dataLoader.GetDataTable(OptionName.PictureLocation).Rows;
@@ -50,6 +50,8 @@ namespace Interview.InterviewWorker
                 PictureSize = new Size(Convert.ToInt32(data[0][0]), Convert.ToInt32(data[1][0]));
                 data = _dataLoader.GetDataTable(OptionName.CanMoveWithoutAnswer).Rows;
                 CanMoveWithoutAnswer = Convert.ToBoolean(data[0][0]);
+                data = _dataLoader.GetDataTable(OptionName.HaveFactorsHistory).Rows;
+                HaveFactorsHistory = Convert.ToBoolean(data[0][0]);
             }
             catch (Exception exp)
             {
@@ -63,8 +65,9 @@ namespace Interview.InterviewWorker
         public static Point PictureLocation { get; private set; }
         public static Size PictureSize { get; private set; }
         public static bool HaveBackward { get; private set; }
-        public static bool HaveHistory { get; private set; }
+        public static bool HaveQuestionsHistory { get; private set; }
         public static bool HavePictures { get; private set; }
         public static bool CanMoveWithoutAnswer { get; private set; }
+        public static bool HaveFactorsHistory { get; private set; }
     }
 }

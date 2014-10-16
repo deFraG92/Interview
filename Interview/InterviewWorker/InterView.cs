@@ -32,7 +32,7 @@ namespace Interview.InterviewWorker
 
         public static void SetInterviewCompleteness()
         {
-            _haveHistory = Options.HaveHistory;
+            _haveHistory = Options.HaveQuestionsHistory;
             _dataLoader.SetDataTable(SetDataType.BaseOptionsInit);
             InterviewCompleteness();
         }
@@ -72,7 +72,8 @@ namespace Interview.InterviewWorker
                 }
                 if (_notAnsweredQuestions)
                 {
-                    return CheckHavingQuestionInResultsScores();
+                    var questionName = CheckHavingQuestionInResultsScores();
+                    return questionName != null ? _questionNumber + 1 + ") " + questionName : null;
                 }
                 if ((_questions.Length > _questionNumber) & (_questionNumber >= 0))
                     return _questionNumber + 1 + ") " + _questions[_questionNumber].Name;

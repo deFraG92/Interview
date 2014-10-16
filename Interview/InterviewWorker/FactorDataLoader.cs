@@ -1,14 +1,7 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Data.SQLite;
 using System.Linq;
-using System.Reflection.Emit;
-using System.Runtime.InteropServices;
-using System.Text;
-using System.Windows.Forms;
 using Interview.DBWorker;
 
 namespace Interview.InterviewWorker
@@ -25,6 +18,7 @@ namespace Interview.InterviewWorker
         private int _themeId;
         private int _respondentId;
         private bool _factorDependence;
+        private int _maxInterviewNum;
 
         public FactorDataLoader(string tns)
         {
@@ -65,14 +59,15 @@ namespace Interview.InterviewWorker
 
         private void SetFactorsNameAndScore()
         {
-            //if (InterView.GetInterviewCompleteness())
-            //{
+            if (InterView.GetInterviewCompleteness())
+            {
+                _maxInterviewNum = GetMaxInterviewNum();
                 _factorDependence = CheckForFactorDependence();
                 var factorIdCollection = !_factorDependence
                     ? GetFactorsIdWithoutFactorDependence()
                     : GetFactorsIdWithFactorDependence();
                 SetFactorScore(factorIdCollection);
-            //}
+            }
         }
 
         private bool CheckForFactorDependence()
@@ -318,11 +313,40 @@ namespace Interview.InterviewWorker
                 {
                     var factorName = GetFactorNameById(factorId);
                     FactorAnalize.SetFactorAndFactorScore(new Factor {Name = factorName}, factorScore);
-                    var newFactorResultsId = GetNewTableIndexId("FactorResults");
-                    var query = "insert into main.FactorResults(id, respondent_id, factor_id, score) " +
-                                "values(" + newFactorResultsId + ", " + _respondentId + ", " + factorId + ", " +
-                                factorScore + ")";
-                    DbConnection.DmlOperation(query);
+                    if (Options.HaveFactorsHistory)
+                    {
+                        InsertFactorInDb(factorId, factorScore);
+                    }
+                    else
+                    {
+                        if (_maxInterviewNum > 0)
+                        {
+                            var query = "select FactorResults.id " +
+                                        "from main.FactorResults " +
+                                        "where FactorResults.interview_number = " + _maxInterviewNum +
+                                        " and FactorResults.respondent_id = " + _respondentId +
+                                        " and FactorResults.theme_id = " + _themeId +
+                                        " and FactorResults.factor_id = " + factorId;
+                            var factorResultId = DbConnection.SelectScalarFromDb(query);
+                            if (factorResultId.ToString() == "")
+                            {
+                                throw new Exception("Factor was not found!");
+                            }
+                            query = "update main.FactorResults " +
+                                    "set FactorResults.answer_date = current_date " +
+                                    ", FactorResults.score = " + factorScore +
+                                    ", FactorResults.interview_number = " + (_maxInterviewNum + 1) +
+                                    " where FactorResults.id = " + Convert.ToInt32(factorResultId);
+                            DbConnection.DmlOperation(query);
+                        }
+                        else
+                        {
+                            InsertFactorInDb(factorId, factorScore);
+                            return;
+                        }
+                        
+                    }
+                    
                 }
                 catch (Exception exp)
                 {
@@ -330,6 +354,24 @@ namespace Interview.InterviewWorker
                 }
             }
         }
+
+        private void InsertFactorInDb(int factorId, int factorScore)
+        {
+            var newFactorResultsId = GetNewTableIndexId("FactorResults");
+            try
+            {
+                var query =
+                    "insert into main.FactorResults(id, respondent_id, factor_id, score, interview_number, answer_date) " +
+                    "values(" + newFactorResultsId + ", " + _respondentId + ", " + factorId + ", " +
+                    factorScore + ", " + (_maxInterviewNum + 1) + ", " + "current_date)";
+                DbConnection.DmlOperation(query);
+            }
+            catch (Exception exp)
+            {
+                throw new Exception("InsertFactorInDb: " + exp);
+            }
+        }
+
 
         private void RespondentAndThemeIdInit()
         {
@@ -416,5 +458,29 @@ namespace Interview.InterviewWorker
             }
 
         }
+
+        private int GetMaxInterviewNum()
+        {
+            var query = "select max(FactorResults.interview_number)" +
+                        "from main.FactorResults " +
+                        "where FactorResults.respondent_id = " + _respondentId +
+                        " and FactorResults.theme_id = " + _themeId;
+            try
+            {
+                var maxInterviewNum = DbConnection.SelectScalarFromDb(query);
+                if (maxInterviewNum.ToString() != "")
+                {
+                    return Convert.ToInt32(maxInterviewNum);
+                }
+
+            }
+            catch (Exception exp)
+            {
+                throw new Exception("GetMaxInterviewNum " + exp);
+            }
+            return 0;
+        }
+        
+
     }
 }

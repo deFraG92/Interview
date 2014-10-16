@@ -38,8 +38,10 @@ namespace Interview.InterviewWorker
                         return GetAdminTools(new[] {"ANSWER_BETWEEN_DISTANCE_X", "ANSWER_BETWEEN_DISTANCE_Y"});
                     case OptionName.HaveBackWard:
                         return GetAdminTools(new[] {"HAVE_BACKWARD"});
-                    case OptionName.HaveHistory:
-                        return GetAdminTools(new[] {"HAVE_HISTORY"});
+                    case OptionName.HaveQuestionsHistory:
+                        return GetAdminTools(new[] {"HAVE_QUESTIONS_HISTORY"});
+                    case OptionName.HaveFactorsHistory:
+                        return GetAdminTools(new[] {"HAVE_FACTORS_HISTORY"});
                     case OptionName.HavePicture:
                         return GetAdminTools(new[] {"HAVE_PICTURES"});
                     case OptionName.PictureLocation:

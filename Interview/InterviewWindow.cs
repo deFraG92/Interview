@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Data.Common;
 using System.Drawing;
-using System.Linq;
 using System.Windows.Forms;
 using Interview.InterviewWorker;
 
@@ -20,8 +17,6 @@ namespace Interview
             Question_Lbl.Location = Options.QuestionLocation;
             Prev_But.Visible = Options.HaveBackward;
             GetQuestionAndAnswers(QuestionMove.Forward);
-            
-            //ParseInit();
         }
 
         private void Next_But_Click(object sender, EventArgs e)
@@ -54,12 +49,5 @@ namespace Interview
                 _questionMaker.MakeAnswers(question, questionMove);
             }
         }
-
-        // Replace to Another Class 
-        #region
-
-        #endregion
-
-
     }
 }
